@@ -1,3 +1,5 @@
 language: r
 sudo: false
 cache: packages
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -t a58194d7-fde1-4e22-8d6a-adf4ef553e68
