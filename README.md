@@ -1,10 +1,14 @@
 # json2test
 
-R library to allow tests (and reference values) for R packages to be specfied in JSON format. This library is primarily useful for functional testing, but unit testing is of course possible too.
+R library to allow tests (and reference values) for R packages to be specfied in JSON format. 
+
+## Purpose
+
+This library is primarily useful for functional and integration testing (but unit testing is of course possible too). Especially in the case where many different use-cases need to be tested and unit test do no fully cover the breadth of cases. Using JSON as the storage format, the module also allows for using dynamically generated of test/reference cases, or use of tests/references obtained from an external API.
 
 ## Workflow
 
-In your R package, in the `/inst` folder, create the following subfolders:
+For general use, in your R package create the `/inst` folder including the following subfolders:
 
 ```
 /inst
@@ -12,9 +16,7 @@ In your R package, in the `/inst` folder, create the following subfolders:
   /reference
 ```
 
-The the test folder, place your JSON files containing the test arguments to be speficified to a function you want to test. Make sure the JSON is valid, use e.g. [JSONlint](http://jsonlint.com/) to check. 
-
-The JSON should be in the format of a named list of tests. The name of the JSON file should corresponds to the function to be tested, e.g. for `test/multiply.json`:
+Inside the test folder, place JSON files containing the test arguments to be speficified for the functions you want to test. Make sure the JSON is valid, use e.g. [JSONlint](http://jsonlint.com/) to check. The JSON should be in the format of a named list of tests. The name of the JSON file should corresponds to the function to be tested, e.g. for `test/multiply.json`:
 
 ```
 {
