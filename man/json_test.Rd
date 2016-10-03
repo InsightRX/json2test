@@ -6,7 +6,8 @@
 \usage{
 json_test(func = NULL, package = NULL, tests = NULL, reference = NULL,
   equal = TRUE, delta = 0.03, run = NULL, skip = c(),
-  list_as_args = TRUE, ignore_keys = c("comment", "comments"))
+  list_as_args = TRUE, ignore_keys = c("comment", "comments"),
+  parse_functions = list())
 }
 \arguments{
 \item{func}{linking to test/reference JSON and function in package to test}
@@ -28,6 +29,8 @@ json_test(func = NULL, package = NULL, tests = NULL, reference = NULL,
 \item{list_as_args}{should the list elements from the JSON be used as arguments to the function? TRUE by default. If FALSE, the list as a whole will be passed to the `args` argument of the function.}
 
 \item{ignore_keys}{ignore specific keys in reference JSON, e.g. to allow for comments}
+
+\item{parse_functions}{list of functions to parse specific JSON tests data before calling the function. This is sometimes useful due to the back-serialization from JSON to R object.}
 }
 \description{
 Wrapper function to run tests and compare with reference

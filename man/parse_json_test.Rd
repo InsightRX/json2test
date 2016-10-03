@@ -4,10 +4,12 @@
 \alias{parse_json_test}
 \title{Safely parse JSON to R object}
 \usage{
-parse_json_test(obj)
+parse_json_test(obj, parse_functions = list())
 }
 \arguments{
-\item{obj}{object}
+\item{obj}{object read from JSON}
+
+\item{parse_functions}{list of function names, keys are the elements in the object}
 }
 \description{
 Safely parse JSON to R object

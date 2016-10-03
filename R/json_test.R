@@ -10,6 +10,7 @@
 #' @param ignore_keys ignore specific keys in reference JSON, e.g. to allow for comments
 #' @param run a specific test to run only, not check. The output object will be returned.
 #' @param list_as_args should the list elements from the JSON be used as arguments to the function? TRUE by default. If FALSE, the list as a whole will be passed to the `args` argument of the function.
+#' @param parse_functions list of functions to parse specific JSON tests data before calling the function. This is sometimes useful due to the back-serialization from JSON to R object.
 #' @export
 json_test <- function(
   func = NULL,
@@ -21,7 +22,8 @@ json_test <- function(
   run = NULL,
   skip = c(),
   list_as_args = TRUE,
-  ignore_keys = c("comment", "comments")) {
+  ignore_keys = c("comment", "comments"),
+  parse_functions = list()) {
   if(!is.null(run)) {
     if(length(run) > 1) {
       stop("Sorry, only a result object for a single test can be returned.")
@@ -63,7 +65,7 @@ json_test <- function(
       } else {
         message(paste0("Testing ", func, "::", key))
       }
-      obj  <- parse_json_test(sel_tests[[key]])
+      obj <- parse_json_test(sel_tests[[key]], parse_functions)
       testit::assert("Test not found!", !is.null(obj))
       if(list_as_args) {
         do.call(what = "fnc", args = obj)
