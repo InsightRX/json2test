@@ -9,6 +9,7 @@
 #' @param delta relative allowed imprecision, default is 0.03. Only used when not specified in reference JSON.
 #' @param ignore_keys ignore specific keys in reference JSON, e.g. to allow for comments
 #' @param run a specific test to run only, not check. The output object will be returned.
+#' @param list_as_args should the list elements from the JSON be used as arguments to the function? TRUE by default. If FALSE, the list as a whole will be passed to the `args` argument of the function.
 #' @export
 json_test <- function(
   module = NULL,
@@ -19,6 +20,7 @@ json_test <- function(
   delta = 0.03,
   run = NULL,
   skip = c(),
+  list_as_args = TRUE,
   ignore_keys = c("comment", "comments")) {
   if(!is.null(run)) {
     if(length(run) > 1) {
@@ -63,7 +65,11 @@ json_test <- function(
       }
       obj  <- parse_json_test(sel_tests[[key]])
       testit::assert("Test not found!", !is.null(obj))
-      tmp  <- func(args = obj)
+      if(list_as_args) {
+        do.call(what = "func", args = obj)
+      } else {
+        tmp  <- func(args = obj)
+      }
       if(!is.null(tmp$error) && tmp$error) {
         if(is.null(reference[[key]][["error"]])) {
           stop("Unexpected error")

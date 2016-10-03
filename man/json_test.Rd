@@ -6,7 +6,7 @@
 \usage{
 json_test(module = NULL, package = "insightrxr", tests = NULL,
   reference = NULL, equal = TRUE, delta = 0.03, run = NULL,
-  skip = c(), ignore_keys = c("comment", "comments"))
+  skip = c(), list_as_args = TRUE, ignore_keys = c("comment", "comments"))
 }
 \arguments{
 \item{module}{linking to test object in tests.json}
@@ -24,6 +24,8 @@ json_test(module = NULL, package = "insightrxr", tests = NULL,
 \item{run}{a specific test to run only, not check. The output object will be returned.}
 
 \item{skip}{a vector of tests to skip (default is to run all)}
+
+\item{list_as_args}{should the list elements from the JSON be used as arguments to the function? TRUE by default. If FALSE, the list as a whole will be passed to the `args` argument of the function.}
 
 \item{ignore_keys}{ignore specific keys in reference JSON, e.g. to allow for comments}
 }
