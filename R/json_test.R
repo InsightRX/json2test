@@ -1,6 +1,6 @@
-#' #' Wrapper function to run tests and compare with reference
+#' Wrapper function to run tests and compare with reference
 #'
-#' @param module linking to test object in tests.json
+#' @param func linking to test/reference JSON and function in package to test
 #' @param package package name from where to take tests.json object from
 #' @param tests a vector of tests to run
 #' @param skip a vector of tests to skip (default is to run all)
@@ -12,8 +12,8 @@
 #' @param list_as_args should the list elements from the JSON be used as arguments to the function? TRUE by default. If FALSE, the list as a whole will be passed to the `args` argument of the function.
 #' @export
 json_test <- function(
-  module = NULL,
-  package = "insightrxr",
+  func = NULL,
+  package = NULL,
   tests = NULL,
   reference = NULL,
   equal = TRUE,
@@ -28,24 +28,24 @@ json_test <- function(
     }
     tests <- run
   }
-  if(!is.null(module)) { # then load from JSON
-    all_tests <- rjson::fromJSON(file = system.file(paste0("test/", module, ".json"), package = package))
-    sel_tests <- all_tests
-    testit::assert("No test object found!", !is.null(sel_tests))
+  if(is.null(package)) {
+    stop("please specify package to be tested")
+  }
+  if(!is.null(func)) { # then load from JSON
+    sel_tests <- rjson::fromJSON(file = system.file(paste0("test/", func, ".json"), package = package))
+    if(is.null(sel_tests) || length(sel_tests) == 0) {
+       message("No tests were found.")
+       return()
+    }
     if(is.null(run)) {
-      all_refs <- rjson::fromJSON(file = system.file(paste0("reference/", module, ".json"), package = "insightrxr"))
+      all_refs <- rjson::fromJSON(file = system.file(paste0("reference/", func, ".json"), package = package))
       reference <- all_refs
       testit::assert("No reference object found!", !is.null(reference))
     }
   } else {
-    if(is.null(sel_tests)) {
-      stop("No tests found in JSON")
-    }
-    if(is.null(reference)) {
-      stop("Either `module` or `reference`-object should be specified")
-    }
+    stop("No function specified to test.")
   }
-  func <- getExportedValue('insightrxr', module)
+  fnc <- getExportedValue(package, func)
   if(!is.null(tests)) {
     sel_tests <- sel_tests[tests]
   }
@@ -59,16 +59,16 @@ json_test <- function(
     }
     if((is.null(reference[[key]][["skip"]]) || reference[[key]][["skip"]] == FALSE) && !(key %in% skip)) {
       if(!is.null(run)) { # just return the output
-        message(paste0("Returning output from ", module))
+        message(paste0("Returning output from ", func))
       } else {
-        message(paste0("Testing ", module, "::", key))
+        message(paste0("Testing ", func, "::", key))
       }
       obj  <- parse_json_test(sel_tests[[key]])
       testit::assert("Test not found!", !is.null(obj))
       if(list_as_args) {
-        do.call(what = "func", args = obj)
+        do.call(what = "fnc", args = obj)
       } else {
-        tmp  <- func(args = obj)
+        tmp  <- fnc(args = obj)
       }
       if(!is.null(tmp$error) && tmp$error) {
         if(is.null(reference[[key]][["error"]])) {
@@ -120,7 +120,7 @@ json_test <- function(
         }
       }
     } else {
-      message(paste0("Skipping ", module, "::", key))
+      message(paste0("Skipping ", func, "::", key))
     }
   }
 }

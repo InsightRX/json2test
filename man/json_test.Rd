@@ -2,14 +2,14 @@
 % Please edit documentation in R/json_test.R
 \name{json_test}
 \alias{json_test}
-\title{#' Wrapper function to run tests and compare with reference}
+\title{Wrapper function to run tests and compare with reference}
 \usage{
-json_test(module = NULL, package = "insightrxr", tests = NULL,
-  reference = NULL, equal = TRUE, delta = 0.03, run = NULL,
-  skip = c(), list_as_args = TRUE, ignore_keys = c("comment", "comments"))
+json_test(func = NULL, package = NULL, tests = NULL, reference = NULL,
+  equal = TRUE, delta = 0.03, run = NULL, skip = c(),
+  list_as_args = TRUE, ignore_keys = c("comment", "comments"))
 }
 \arguments{
-\item{module}{linking to test object in tests.json}
+\item{func}{linking to test/reference JSON and function in package to test}
 
 \item{package}{package name from where to take tests.json object from}
 
@@ -30,6 +30,6 @@ json_test(module = NULL, package = "insightrxr", tests = NULL,
 \item{ignore_keys}{ignore specific keys in reference JSON, e.g. to allow for comments}
 }
 \description{
-#' Wrapper function to run tests and compare with reference
+Wrapper function to run tests and compare with reference
 }
 

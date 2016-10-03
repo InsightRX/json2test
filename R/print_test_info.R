@@ -6,7 +6,7 @@ print_test_info <- function() {
   tab <- c()
   for(key in tests) {
     tmp <- rjson::fromJSON(file = system.file(paste0("test/", key), package = "insightrxr"))
-    module <- stringr::str_replace_all(key, "(advice_|.json)", "")
+    module <- stringr::str_replace_all(key, "(.json)", "")
     tab <- rbind(tab, cbind(module, length(names(tmp))))
   }
   tab <- data.frame(tab)
