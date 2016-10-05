@@ -5,9 +5,8 @@
 \title{Wrapper function to run tests and compare with reference}
 \usage{
 json_test(func = NULL, package = NULL, tests = NULL, reference = NULL,
-  equal = TRUE, delta = 0.03, run = NULL, skip = c(),
-  list_as_args = TRUE, ignore_keys = c("comment", "comments"),
-  parse_functions = list())
+  delta = NULL, run = NULL, skip = c(), list_as_args = TRUE,
+  ignore_keys = c("comment", "comments"), parse_functions = list())
 }
 \arguments{
 \item{func}{linking to test/reference JSON and function in package to test}
@@ -18,9 +17,7 @@ json_test(func = NULL, package = NULL, tests = NULL, reference = NULL,
 
 \item{reference}{list of reference values}
 
-\item{equal}{should answers be equal? if not, specify allowed relative `delta`}
-
-\item{delta}{relative allowed imprecision, default is 0.03. Only used when not specified in reference JSON.}
+\item{delta}{relative allowed imprecision, default is 0.03. Overrides value specified in reference JSON.}
 
 \item{run}{a specific test to run only, not check. The output object will be returned.}
 

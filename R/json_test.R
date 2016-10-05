@@ -5,8 +5,7 @@
 #' @param tests a vector of tests to run
 #' @param skip a vector of tests to skip (default is to run all)
 #' @param reference list of reference values
-#' @param equal should answers be equal? if not, specify allowed relative `delta`
-#' @param delta relative allowed imprecision, default is 0.03. Only used when not specified in reference JSON.
+#' @param delta relative allowed imprecision, default is 0.03. Overrides value specified in reference JSON.
 #' @param ignore_keys ignore specific keys in reference JSON, e.g. to allow for comments
 #' @param run a specific test to run only, not check. The output object will be returned.
 #' @param list_as_args should the list elements from the JSON be used as arguments to the function? TRUE by default. If FALSE, the list as a whole will be passed to the `args` argument of the function.
@@ -17,8 +16,7 @@ json_test <- function(
   package = NULL,
   tests = NULL,
   reference = NULL,
-  equal = TRUE,
-  delta = 0.03,
+  delta = NULL,
   run = NULL,
   skip = c(),
   list_as_args = TRUE,
@@ -85,18 +83,18 @@ json_test <- function(
           if(!refkey %in% ignore_keys) {
             calc <- get_nested_value(tmp, refkey)
             ref  <- reference[[key]][[refkey]]
+            equal_i <- TRUE
+            ref_i <- ref
             if(class(ref) == "list" && !is.null(ref$value) && !is.null(ref$delta)) {
               ref_i <- ref$value
-              if(is.null(ref$delta)) {
-                equal_i <- TRUE
-              } else {
+              if(!is.null(ref$delta)) {
                 equal_i <- FALSE
               }
               delta_i <- ref$delta
-            } else {
-              ref_i <- ref
+            }
+            if(!is.null(delta)) {
+              equal_i <- FALSE
               delta_i <- delta
-              equal_i <- equal
             }
             if(is.null(calc)) {
               testit::assert("check element should be missing", ref_i == "NA")
