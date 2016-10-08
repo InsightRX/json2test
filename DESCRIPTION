@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Ron Keizer
 Maintainer: Ron Keizer <ronkeizer@gmail.com>
 Description: R library to allow tests and reference values to be specfied in JSON format. Primarily useful for functional testing.
-Imports: testit, stringr, rjson, covr
+Imports: stringr, rjson, covr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

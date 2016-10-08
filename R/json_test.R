@@ -40,7 +40,7 @@ json_test <- function(
     if(is.null(run)) {
       all_refs <- rjson::fromJSON(file = system.file(paste0("reference/", func, ".json"), package = package))
       reference <- all_refs
-      testit::assert("No reference object found!", !is.null(reference))
+      # json2test::assert("Reference object available", !is.null(reference))
     }
   } else {
     stop("No function specified to test.")
@@ -64,7 +64,7 @@ json_test <- function(
         message(paste0("Testing ", func, "::", key))
       }
       obj <- parse_json_test(sel_tests[[key]], parse_functions)
-      testit::assert("Test not found!", !is.null(obj))
+      # json2test::assert("Test available", !is.null(obj))
       if(list_as_args) {
         do.call(what = "fnc", args = obj)
       } else {
@@ -78,7 +78,7 @@ json_test <- function(
       if(!is.null(run)) { # just return the output
         return(tmp)
       } else { # run the actual tests
-        testit::assert("reference for test available", length(names(reference[[key]])) > 0)
+        # json2test::assert("Reference for test available", length(names(reference[[key]])) > 0)
         for(refkey in names(reference[[key]])) {
           if(!refkey %in% ignore_keys) {
             calc <- get_nested_value(tmp, refkey)
@@ -97,7 +97,7 @@ json_test <- function(
               delta_i <- delta
             }
             if(is.null(calc)) {
-              testit::assert("check element should be missing", ref_i == "NA")
+              json2test::assert(func, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
               message(paste0(" - ", key, "::", refkey, " (NA)"))
             } else {
               if(equal_i || class(ref) == "character") {
@@ -106,13 +106,13 @@ json_test <- function(
                 message(paste0(" - ", key, "::", refkey, " (", calc , " == ", ref_i,", delta=", 100*delta_i,"%)"))
               }
               if(class(ref_i) == "character") {
-                testit::assert(refkey, ref_i == calc)
+                json2test::assert(func, paste0(key,": ", refkey), ref_i == calc)
               }
               if(class(ref_i) %in% c("numeric", "integer")) {
                 if(equal_i) {
-                  testit::assert(ref_i == calc)
+                  json2test::assert(func, paste0(key,": ", refkey), ref_i == calc)
                 } else {
-                  testit::assert(refkey, abs((ref_i - calc) / ref_i) < delta_i )
+                  json2test::assert(func, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
                 }
               }
             }
