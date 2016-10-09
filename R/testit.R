@@ -4,6 +4,7 @@
 #' emits a message in case of errors, which can be a helpful hint for diagnosing
 #' the errors (\code{stopifnot()} only prints the possibly truncated source code
 #' of the expressions).
+#' @param func name of the function to test
 #' @param fact a message for the assertions when any of them fails; treated the
 #'   same way as expressions in \code{...} if it is not a character string,
 #'   which means you do not have to provide a message to this function

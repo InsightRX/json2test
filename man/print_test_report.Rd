@@ -4,7 +4,7 @@
 \alias{print_test_report}
 \title{Print test result collector}
 \usage{
-print_test_report()
+print_test_report(failed_only = TRUE)
 }
 \description{
 Print test result collector
