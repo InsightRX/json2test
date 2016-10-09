@@ -4,7 +4,6 @@
 print_test_report <- function() {
   if(!is.null(test_result_collector)) {
     cat("\n-------------- Test report ------------------------\n")
-    # res <- (t(data.frame(test_result_collector)))
     res <- data.frame(test_result_collector)
     colnames(res) <- c("Function", "Test", "Result")
     success <- sum(res$Result == "OK")/length(res[,1])*100
@@ -24,4 +23,11 @@ print_test_report <- function() {
   } else {
     stop("Sorry, no test results available.")
   }
+}
+
+#' Reset test result collector
+#'
+#' @export
+reset_test_report <- function() {
+  test_result_collector <<- c()
 }
