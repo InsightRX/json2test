@@ -10,6 +10,8 @@ assert(func, fact, ...)
 x \%==\% y
 }
 \arguments{
+\item{func}{name of the function to test}
+
 \item{fact}{a message for the assertions when any of them fails; treated the
 same way as expressions in \code{...} if it is not a character string,
 which means you do not have to provide a message to this function}
