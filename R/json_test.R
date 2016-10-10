@@ -50,13 +50,6 @@ json_test <- function(
     sel_tests <- sel_tests[tests]
   }
   for(key in names(sel_tests)) {
-    ## reformat covs, as conseuquence of loading JSON, not a bug in code
-    for(m in names(sel_tests[[key]]$covs)) {
-      if(class(sel_tests[[key]]$covs[[m]]) == "list") {
-        #        print(as.data.frame(sel_tests[[key]]$covs[[m]])))
-        sel_tests[[key]]$covs[[m]] <- data.frame(sel_tests[[key]]$covs[[m]])
-      }
-    }
     if((is.null(reference[[key]][["skip"]]) || reference[[key]][["skip"]] == FALSE) && !(key %in% skip)) {
       if(!is.null(run)) { # just return the output
         message(paste0("Returning output from ", func))
