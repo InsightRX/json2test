@@ -4,7 +4,10 @@
 \alias{print_test_info}
 \title{Print some info on number of tests per function}
 \usage{
-print_test_info()
+print_test_info(package = NULL)
+}
+\arguments{
+\item{package}{package name}
 }
 \description{
 Print some info on number of tests per function

@@ -8,10 +8,13 @@ print_test_report <- function() {
     colnames(res) <- c("Function", "Test", "Result")
     success <- sum(res$Result == "OK")/length(res[,1])*100
     cat(paste0("Overall passed: ", round(success, 1), "%\n\n"))
-    pct <- function(x) { return(paste0(round(100*sum(as.character(x) == "OK")/length(x),1), "%")) }
-    pass <- aggregate(as.character(res$Result), by = list(Function = res$Function), FUN = pct)
-    colnames(pass) <- c("Function", "Pass %")
-    print(pass)
+    passed  <- function(x) { return(sum(as.character(x) == "OK")) }
+    failed  <- function(x) { return(sum(as.character(x) != "OK")) }
+    tab <- res %>% dplyr::group_by(Function) %>% dplyr::summarise("Passed" = passed(Result),
+                                                    "Failed" = failed(Result),
+                                                    "Total" = length(Result),
+                                                    "Percent" = round(100*passed(Result)/length(Result),1))
+    print(data.frame(tab))
     cat(paste0("\n------------ Failed tests (",sum(res$Result != "OK"),"/",length(res[,1]),") ------------------\n"))
     if(sum(res$Result != "OK") > 0) {
       print(res[res$Result != "OK",])
@@ -24,6 +27,8 @@ print_test_report <- function() {
     stop("Sorry, no test results available.")
   }
 }
+
+`%>%` <- dplyr::`%>%`
 
 #' Reset test result collector
 #'

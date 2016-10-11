@@ -52,11 +52,12 @@ assert = function(func, fact, ...) {
   }
   mc = match.call(); if (fact_char) mc[['fact']] = NULL
   for (i in 1L:n) if (!all_true(r <- ll[[i]])) {
-    test_result_collector <<- rbind(test_result_collector, cbind(func, fact, "** Fail **"))
+    msg <- sprintf(ngettext(length(r), '%s is not TRUE', '%s are not all TRUE'),
+                   deparse_key(mc[[i + 1]]))
+    test_result_collector <<- rbind(test_result_collector, cbind(func, fact, msg))
     if (fact_char) message('assertion failed: ', fact)
     if(is.null(test_result_collector)) {
-      stop(sprintf(ngettext(length(r), '%s is not TRUE', '%s are not all TRUE'),
-                   deparse_key(mc[[i + 1]])), call. = FALSE, domain = NA)
+      stop(msg, call. = FALSE, domain = NA)
     }
   }
 }
