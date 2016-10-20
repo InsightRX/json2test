@@ -20,7 +20,7 @@ json_test <- function(
   run = NULL,
   skip = c(),
   list_as_args = TRUE,
-  ignore_keys = c("comment", "comments"),
+  ignore_keys = c(),
   parse_functions = list()) {
   if(!is.null(run)) {
     if(length(run) > 1) {
@@ -31,6 +31,7 @@ json_test <- function(
   if(is.null(package)) {
     stop("please specify package to be tested")
   }
+  ignore_keys <- unique(c(ignore_keys, c("comment", "comments")))
   if(!is.null(func)) { # then load from JSON
     sel_tests <- rjson::fromJSON(file = system.file(paste0("test/", func, ".json"), package = package))
     if(is.null(sel_tests) || length(sel_tests) == 0) {
@@ -74,7 +75,9 @@ json_test <- function(
       if(!is.null(run)) { # just return the output
         return(tmp)
       } else { # run the actual tests
-        # json2test::assert("Reference for test available", length(names(reference[[key]])) > 0)
+        if(!is.null(reference[[key]][["comment"]])) {
+          message(paste0("Comment: ", reference[[key]][["comment"]]))
+        }
         for(refkey in names(reference[[key]])) {
           if(!refkey %in% ignore_keys) {
             calc <- get_nested_value(tmp, refkey)
