@@ -64,17 +64,17 @@ json_test <- function(
       } else {
         tmp  <- fnc(args = obj)
       }
-      if(class(tmp) != "list") {
-        stop(paste0("No list returned: ", tmp))
-      }
-      if(!is.null(tmp$error) && tmp$error) {
-        if(is.null(reference[[key]][["error"]])) {
-          stop("Unexpected error")
-        }
-      }
       if(!is.null(run)) { # just return the output
         return(tmp)
       } else { # run the actual tests
+        if(class(tmp) != "list") {
+          stop(paste0("No list returned: ", tmp))
+        }
+        if(!is.null(tmp$error) && tmp$error) {
+          if(is.null(reference[[key]][["error"]])) {
+            stop("Unexpected error")
+          }
+        }
         if(!is.null(reference[[key]][["comment"]])) {
           message(paste0("Comment: ", reference[[key]][["comment"]]))
         }
