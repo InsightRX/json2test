@@ -2,6 +2,7 @@
 #'
 #' @param func linking to test/reference JSON and function in package to test
 #' @param package package name from where to take tests.json object from
+#' @param test_id specifies test/reference JSON to use, i.e. /home/user/R/3.3/package_name/test/<test_id>.json. If not specified, assumes `func` is used as `test_id`.
 #' @param tests a vector of tests to run
 #' @param skip a vector of tests to skip (default is to run all)
 #' @param reference list of reference values
@@ -10,10 +11,12 @@
 #' @param run a specific test to run only, not check. The output object will be returned.
 #' @param list_as_args should the list elements from the JSON be used as arguments to the function? TRUE by default. If FALSE, the list as a whole will be passed to the `args` argument of the function.
 #' @param parse_functions list of functions to parse specific JSON tests data before calling the function. This is sometimes useful due to the back-serialization from JSON to R object.
+#' @param overwrite optional list specifying what keys of test JSON to manually overwrite with given values
 #' @export
 json_test <- function(
   func = NULL,
   package = NULL,
+  test_id = NULL,
   tests = NULL,
   reference = NULL,
   delta = NULL,
@@ -21,7 +24,8 @@ json_test <- function(
   skip = c(),
   list_as_args = TRUE,
   ignore_keys = c(),
-  parse_functions = list()) {
+  parse_functions = list(),
+  overwrite = NULL) {
   if(!is.null(run)) {
     if(length(run) > 1) {
       stop("Sorry, only a result object for a single test can be returned.")
@@ -33,13 +37,29 @@ json_test <- function(
   }
   ignore_keys <- unique(c(ignore_keys, c("comment", "comments")))
   if(!is.null(func)) { # then load from JSON
-    sel_tests <- rjson::fromJSON(file = system.file(paste0("test/", func, ".json"), package = package))
+    if(is.null(test_id)) {
+      test_id <- func
+    }
+    test_file <- system.file(paste0("test/", test_id, ".json"), package = package)
+    txt <- readChar(test_file, file.info(test_file)$size)
+    sel_tests <- opencpu:::parse_arg(txt)
+    if(!is.null(overwrite)) {
+      for (t in seq(sel_tests)) {
+        for(w in names(overwrite)) {
+          sel_tests[[t]][[w]] <- overwrite[[w]]
+        }
+      }
+    }
+    # sel_tests <- rjson::fromJSON(file = system.file(paste0("test/", func, ".json"), package = package))
     if(is.null(sel_tests) || length(sel_tests) == 0) {
        message("No tests were found.")
        return()
     }
     if(is.null(run)) {
-      all_refs <- rjson::fromJSON(file = system.file(paste0("reference/", func, ".json"), package = package))
+      ref_file <- system.file(paste0("reference/", test_id, ".json"), package = package)
+      txt <- readChar(ref_file, file.info(ref_file)$size)
+      all_refs <- opencpu:::parse_arg(txt)
+      # all_refs <- rjson::fromJSON(file = ref_file)
       reference <- all_refs
       # json2test::assert("Reference object available", !is.null(reference))
     }
