@@ -2,5 +2,11 @@ language: r
 warnings_are_errors: false
 sudo: false
 cache: packages
+addons:
+  apt:
+    packages:
+      - libapparmor-dev
+      - libprotobuf-dev
+      - protobuf-compiler
 after_success:
   - Rscript -e 'library(covr);codecov(token="a58194d7-fde1-4e22-8d6a-adf4ef553e68")'
