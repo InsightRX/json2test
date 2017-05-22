@@ -18,4 +18,3 @@ json_test_all(func = NULL, package = NULL, skip_func = c(), ...)
 \description{
 Run all JSON tests included with package
 }
-

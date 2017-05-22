@@ -12,4 +12,3 @@ as.num(x)
 \description{
 Convert to numeric from factors and character
 }
-

@@ -32,6 +32,7 @@ json_test <- function(
     }
     tests <- run
   }
+  print(tests)
   if(is.null(package)) {
     stop("please specify package to be tested")
   }
@@ -42,7 +43,7 @@ json_test <- function(
     }
     test_file <- system.file(paste0("test/", test_id, ".json"), package = package)
     txt <- readChar(test_file, file.info(test_file)$size)
-    sel_tests <- opencpu:::parse_arg(txt)
+    sel_tests <- parse_arg(txt)
     if(!is.null(overwrite)) {
       for (t in seq(sel_tests)) {
         for(w in names(overwrite)) {
@@ -58,7 +59,7 @@ json_test <- function(
     if(is.null(run)) {
       ref_file <- system.file(paste0("reference/", test_id, ".json"), package = package)
       txt <- readChar(ref_file, file.info(ref_file)$size)
-      all_refs <- opencpu:::parse_arg(txt)
+      all_refs <- parse_arg(txt)
       # all_refs <- rjson::fromJSON(file = ref_file)
       reference <- all_refs
       # json2test::assert("Reference object available", !is.null(reference))

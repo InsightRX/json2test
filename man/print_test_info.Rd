@@ -12,4 +12,3 @@ print_test_info(package = NULL)
 \description{
 Print some info on number of tests per function
 }
-

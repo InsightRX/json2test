@@ -4,14 +4,17 @@
 \alias{json_test}
 \title{Wrapper function to run tests and compare with reference}
 \usage{
-json_test(func = NULL, package = NULL, tests = NULL, reference = NULL,
-  delta = NULL, run = NULL, skip = c(), list_as_args = TRUE,
-  ignore_keys = c("comment", "comments"), parse_functions = list())
+json_test(func = NULL, package = NULL, test_id = NULL, tests = NULL,
+  reference = NULL, delta = NULL, run = NULL, skip = c(),
+  list_as_args = TRUE, ignore_keys = c(), parse_functions = list(),
+  overwrite = NULL)
 }
 \arguments{
 \item{func}{linking to test/reference JSON and function in package to test}
 
 \item{package}{package name from where to take tests.json object from}
+
+\item{test_id}{specifies test/reference JSON to use, i.e. /home/user/R/3.3/package_name/test/<test_id>.json. If not specified, assumes `func` is used as `test_id`.}
 
 \item{tests}{a vector of tests to run}
 
@@ -28,8 +31,9 @@ json_test(func = NULL, package = NULL, tests = NULL, reference = NULL,
 \item{ignore_keys}{ignore specific keys in reference JSON, e.g. to allow for comments}
 
 \item{parse_functions}{list of functions to parse specific JSON tests data before calling the function. This is sometimes useful due to the back-serialization from JSON to R object.}
+
+\item{overwrite}{optional list specifying what keys of test JSON to manually overwrite with given values}
 }
 \description{
 Wrapper function to run tests and compare with reference
 }
-

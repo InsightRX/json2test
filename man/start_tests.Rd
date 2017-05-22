@@ -9,4 +9,3 @@ start_tests()
 \description{
 Reset test result collector
 }
-

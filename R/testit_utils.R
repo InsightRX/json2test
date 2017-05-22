@@ -20,10 +20,10 @@ all_true = function(x) {
   is.logical(x) && length(x) && !any(is.na(x)) && all(x)
 }
 
-insert_identical = function() {
-  if (!has_error(rstudioapi::verifyAvailable()))
-    rstudioapi::insertText(text = ' %==% ')
-}
+# insert_identical = function() {
+#   if (!has_error(rstudioapi::verifyAvailable()))
+#     rstudioapi::insertText(text = ' %==% ')
+# }
 
 # This function is a modification of base::sys.source.  It allows to specify
 # the top-level environment, which is by default "envir" (the same as in

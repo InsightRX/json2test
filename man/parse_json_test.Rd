@@ -14,4 +14,3 @@ parse_json_test(obj, parse_functions = list())
 \description{
 Safely parse JSON to R object
 }
-

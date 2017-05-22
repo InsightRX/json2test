@@ -41,4 +41,3 @@ environment will be removed before the code is executed.
 \seealso{
 The \pkg{testthat} package (much more sophisticated).
 }
-

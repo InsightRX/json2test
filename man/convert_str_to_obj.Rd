@@ -12,4 +12,3 @@ convert_str_to_obj(x)
 \description{
 Internal function used for testing
 }
-

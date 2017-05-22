@@ -9,4 +9,3 @@ print_test_report()
 \description{
 Print test result collector
 }
-

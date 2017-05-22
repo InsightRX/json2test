@@ -14,4 +14,3 @@ get_nested_value(l = list(), address = "")
 \description{
 Get nested value from a list
 }
-
