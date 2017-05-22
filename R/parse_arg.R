@@ -27,7 +27,7 @@ parse_arg <- function(x){
 
   #if string starts with { or [ we test for json
   if(grepl("^[ \t\r\n]*(\\{|\\[)", x)) {
-    if(validate(x)) {
+    if(jsonlite::validate(x)) {
       return(jsonlite::fromJSON(x));
     }
   }
