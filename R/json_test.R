@@ -92,8 +92,8 @@ json_test <- function(
           stop(paste0("No list returned: ", tmp))
         }
         if(!is.null(tmp$error) && tmp$error) {
-          if(is.null(reference[[key]][["error"]])) {
-            stop("Unexpected error")
+          if(is.null(reference[[key]][["error"]])) { # if error is not actually expected
+            stop(paste0("Unexpected error:\n", paste(tmp, collapse="\n")))
           }
         }
         if(!is.null(reference[[key]][["comment"]])) {
