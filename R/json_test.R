@@ -42,7 +42,12 @@ json_test <- function(
       test_id <- func
     }
     test_file <- system.file(paste0("test/", test_id, ".json"), package = package)
-    txt <- readChar(test_file, file.info(test_file)$size)
+    if(!file.exists(test_file)) {
+      stop(paste0("File ", test_file, " not found!"))
+    } else {
+      message(paste0("Reading tests in file ", test_file, "..."))
+    }
+    txt <- readr::read_file(test_file)
     sel_tests <- parse_arg(txt)
     if(!is.null(overwrite)) {
       for (t in seq(sel_tests)) {
@@ -51,18 +56,18 @@ json_test <- function(
         }
       }
     }
-    # sel_tests <- rjson::fromJSON(file = system.file(paste0("test/", func, ".json"), package = package))
     if(is.null(sel_tests) || length(sel_tests) == 0) {
        message("No tests were found.")
        return()
     }
     if(is.null(run)) {
       ref_file <- system.file(paste0("reference/", test_id, ".json"), package = package)
-      txt <- readChar(ref_file, file.info(ref_file)$size)
-      all_refs <- parse_arg(txt)
-      # all_refs <- rjson::fromJSON(file = ref_file)
+      if(!file.exists(ref_file)) {
+        stop(paste0("No reference file found for this module: ", ref_file))
+      }
+      txt_ref <- readr::read_file(ref_file)
+      all_refs <- parse_arg(txt_ref)
       reference <- all_refs
-      # json2test::assert("Reference object available", !is.null(reference))
     }
   } else {
     stop("No function specified to test.")
