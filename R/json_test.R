@@ -32,7 +32,6 @@ json_test <- function(
     }
     tests <- run
   }
-  print(tests)
   if(is.null(package)) {
     stop("please specify package to be tested")
   }
@@ -84,7 +83,6 @@ json_test <- function(
         message(paste0("Testing ", func, "::", key))
       }
       obj <- parse_json_test(sel_tests[[key]], parse_functions)
-      # json2test::assert("Test available", !is.null(obj))
       if(list_as_args) {
         do.call(what = "fnc", args = obj)
       } else {
@@ -122,7 +120,7 @@ json_test <- function(
               delta_i <- delta
             }
             if(is.null(calc)) {
-              json2test::assert(func, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
+              json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
               message(paste0(" - ", key, "::", refkey, " (NA)"))
             } else {
               if(equal_i || class(ref) == "character") {
@@ -131,13 +129,13 @@ json_test <- function(
                 message(paste0(" - ", key, "::", refkey, " (", calc , " == ", ref_i,", delta=", 100*delta_i,"%)"))
               }
               if(class(ref_i) == "character") {
-                json2test::assert(func, paste0(key,": ", refkey), ref_i == calc)
+                json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
               }
               if(class(ref_i) %in% c("numeric", "integer")) {
                 if(equal_i) {
-                  json2test::assert(func, paste0(key,": ", refkey), ref_i == calc)
+                  json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
                 } else {
-                  json2test::assert(func, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
+                  json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
                 }
               }
             }

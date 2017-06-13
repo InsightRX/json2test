@@ -7,7 +7,6 @@ get_nested_value <- function(l = list(), address = "") {
     if(!is.null(address) && length(address) > 0) {
       if(stringr::str_detect(address, ".")) {
         vec <- unlist(stringr::str_split(address, "\\."))
-        #print(vec)
         if(!is.na(as.numeric(vec[1]))) {
           if(class(l) == "list") {
             return(get_nested_value(l[[as.numeric(vec[1])]], stringr::str_c(vec[-1], collapse = ".")))
