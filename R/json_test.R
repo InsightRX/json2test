@@ -46,15 +46,17 @@ json_test <- function(
     } else {
       message(paste0("Reading tests in file ", test_file, "..."))
     }
-    txt <- readr::read_file(test_file)
-    sel_tests <- parse_arg(txt)
-    if(!is.null(overwrite)) {
-      for (t in seq(sel_tests)) {
-        for(w in names(overwrite)) {
-          sel_tests[[t]][[w]] <- overwrite[[w]]
+    suppressWarnings({
+      txt <- readr::read_file(test_file)
+      sel_tests <- parse_arg(txt)
+      if(!is.null(overwrite)) {
+        for (t in seq(sel_tests)) {
+          for(w in names(overwrite)) {
+            sel_tests[[t]][[w]] <- overwrite[[w]]
+          }
         }
       }
-    }
+    })
     if(is.null(sel_tests) || length(sel_tests) == 0) {
        message("No tests were found.")
        return()
