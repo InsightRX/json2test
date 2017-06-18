@@ -55,10 +55,13 @@ assert = function(func, fact, ...) {
     msg <- sprintf(ngettext(length(r), '%s is not TRUE', '%s are not all TRUE'),
                    deparse_key(mc[[i + 1]]))
     test_result_collector <<- rbind(test_result_collector, cbind(func, fact, msg))
-    if (fact_char) message('assertion failed: ', fact)
+    # if (fact_char) message('assertion failed: ', fact)
     if(is.null(test_result_collector)) {
       stop(msg, call. = FALSE, domain = NA)
     }
+    return(FALSE)
+  } else {
+    return(TRUE)
   }
 }
 

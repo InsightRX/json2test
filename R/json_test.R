@@ -125,20 +125,22 @@ json_test <- function(
               json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
               message(paste0(" - ", key, "::", refkey, " (NA)"))
             } else {
-              if(equal_i || class(ref) == "character") {
-                message(paste0(" - ", key, "::", refkey, " (", calc , " == ", ref_i,")"))
-              } else {
-                message(paste0(" - ", key, "::", refkey, " (", calc , " == ", ref_i,", delta=", 100*delta_i,"%)"))
-              }
+              result <- FALSE
               if(class(ref_i) == "character") {
-                json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
+                result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
               }
               if(class(ref_i) %in% c("numeric", "integer")) {
                 if(equal_i) {
-                  json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
+                  result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
                 } else {
-                  json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
+                  result <- json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
                 }
+              }
+              sign <- ifelse(!result, "   x\t", "   ✓\t")
+              if(equal_i || class(ref) == "character") {
+                message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,")"))
+              } else {
+                message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,", delta=", 100*delta_i,"%)"))
               }
             }
           }
