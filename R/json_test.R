@@ -113,7 +113,7 @@ json_test <- function(
             ref  <- reference[[key]][[refkey]]
             if(!do_checks) { # fail all checks for this test
               sign <- "   x\t"
-              message(paste0(sign, key, "::", refkey, " ( ? ", " == ", ref_i,")"))
+              message(paste0(sign, key, "::", refkey, " ( ? ", " == ", ref,")"))
               json2test::assert(test_id, paste0(key,": ", refkey), FALSE)
             } else {
               equal_i <- TRUE
