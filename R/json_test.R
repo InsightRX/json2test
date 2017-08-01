@@ -88,7 +88,7 @@ json_test <- function(
       if(list_as_args) {
         do.call(what = "fnc", args = obj)
       } else {
-        tmp  <- fnc(args = obj)
+        tmp <- fnc(args = obj)
       }
       if(!is.null(run)) { # just return the output
         return(tmp)
@@ -96,9 +96,12 @@ json_test <- function(
         if(class(tmp) != "list") {
           stop(paste0("No list returned: ", tmp))
         }
+        do_checks <- TRUE
         if(!is.null(tmp$error) && tmp$error) {
           if(is.null(reference[[key]][["error"]])) { # if error is not actually expected
-            stop(paste0("Unexpected error:\n", paste(tmp, collapse="\n")))
+            message(paste0("Unexpected error:\n", paste(tmp, collapse="\n")))
+            result <- FALSE
+            do_checks <- FALSE
           }
         }
         if(!is.null(reference[[key]][["comment"]])) {
@@ -108,39 +111,45 @@ json_test <- function(
           if(!refkey %in% ignore_keys) {
             calc <- get_nested_value(tmp, refkey)
             ref  <- reference[[key]][[refkey]]
-            equal_i <- TRUE
-            ref_i <- ref
-            if(class(ref) == "list" && !is.null(ref$value) && !is.null(ref$delta)) {
-              ref_i <- ref$value
-              if(!is.null(ref$delta)) {
-                equal_i <- FALSE
-              }
-              delta_i <- ref$delta
-            }
-            if(!is.null(delta)) {
-              equal_i <- FALSE
-              delta_i <- delta
-            }
-            if(is.null(calc)) {
-              json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
-              message(paste0(" - ", key, "::", refkey, " (NA)"))
+            if(!do_checks) { # fail all checks for this test
+              sign <- "   x\t"
+              message(paste0(sign, key, "::", refkey, " ( ? ", " == ", ref_i,")"))
+              json2test::assert(test_id, paste0(key,": ", refkey), FALSE)
             } else {
-              result <- FALSE
-              if(class(ref_i) == "character") {
-                result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
-              }
-              if(class(ref_i) %in% c("numeric", "integer")) {
-                if(equal_i) {
-                  result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
-                } else {
-                  result <- json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
+              equal_i <- TRUE
+              ref_i <- ref
+              if(class(ref) == "list" && !is.null(ref$value) && !is.null(ref$delta)) {
+                ref_i <- ref$value
+                if(!is.null(ref$delta)) {
+                  equal_i <- FALSE
                 }
+                delta_i <- ref$delta
               }
-              sign <- ifelse(!result, "   x\t", "   ✓\t")
-              if(equal_i || class(ref) == "character") {
-                message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,")"))
+              if(!is.null(delta)) {
+                equal_i <- FALSE
+                delta_i <- delta
+              }
+              if(is.null(calc)) {
+                json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
+                message(paste0(" - ", key, "::", refkey, " (NA)"))
               } else {
-                message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,", delta=", 100*delta_i,"%)"))
+                result <- FALSE
+                if(class(ref_i) == "character") {
+                  result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
+                }
+                if(class(ref_i) %in% c("numeric", "integer")) {
+                  if(equal_i) {
+                    result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
+                  } else {
+                    result <- json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
+                  }
+                }
+                sign <- ifelse(!result, "   x\t", "   ✓\t")
+                if(equal_i || class(ref) == "character") {
+                  message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,")"))
+                } else {
+                  message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,", delta=", 100*delta_i,"%)"))
+                }
               }
             }
           }
