@@ -35,7 +35,7 @@ json_test <- function(
   if(is.null(package)) {
     stop("please specify package to be tested")
   }
-  ignore_keys <- unique(c(ignore_keys, c("comment", "comments")))
+  ignore_keys <- unique(c(ignore_keys, c("comment", "comments", "skip")))
   if(!is.null(func)) { # then load from JSON
     if(is.null(test_id)) {
       test_id <- func
