@@ -40,19 +40,26 @@ json_test <- function(
     if(is.null(test_id)) {
       test_id <- func
     }
-    test_file <- system.file(paste0("test/", test_id, ".json"), package = package)
-    if(!file.exists(test_file)) {
+    test_dir <- system.file(paste0("test/", test_id), package=package)
+    if(!file.exists(test_dir)) {
       stop(paste0("File ", test_file, " not found!"))
     } else {
-      message(paste0("Reading tests in file ", test_file, "..."))
+      message(paste0("Reading test(s) for ", test_dir, "..."))
     }
+    sel_tests <- list()
+    d <- system.file(paste0("test/", test_id), package=package)
+    test_files <- stringr::str_replace_all(
+      dir(d), "\\.json", "")
     suppressWarnings({
-      txt <- readr::read_file(test_file)
-      sel_tests <- parse_arg(txt)
-      if(!is.null(overwrite)) {
-        for (t in seq(sel_tests)) {
-          for(w in names(overwrite)) {
-            sel_tests[[t]][[w]] <- overwrite[[w]]
+      for(q in seq(test_files)) {
+        txt <- readr::read_file(paste0(d, "/", test_files[q], ".json"))
+        tmp <- parse_arg(txt)
+        sel_tests[[test_files[q]]] <- tmp
+        if(!is.null(overwrite)) {
+          for (t in seq(sel_tests)) {
+            for(w in names(overwrite)) {
+              sel_tests[[t]][[w]] <- overwrite[[w]]
+            }
           }
         }
       }
@@ -62,13 +69,20 @@ json_test <- function(
        return()
     }
     if(is.null(run)) {
-      ref_file <- system.file(paste0("reference/", test_id, ".json"), package = package)
-      if(!file.exists(ref_file)) {
-        stop(paste0("No reference file found for this module: ", ref_file))
+      ref_dir <- system.file(paste0("reference/", test_id), package = package)
+      sel_ref <- list()
+      d <- system.file(paste0("reference/", test_id), package=package)
+      ref_files <- stringr::str_replace_all(
+        dir(d), "\\.json", "")
+      # ref_file <- system.file(paste0("reference/", test_id, ".json"), package = package)
+      for(q in seq(ref_files)) {
+        if(!file.exists(paste0(d, "/", ref_files[q], ".json"))) {
+          stop(paste0("Reference file missing for this test: ", ref_files[q]))
+        }
+        txt_ref <- readr::read_file(paste0(d, "/", ref_files[q], ".json"))
+        all_refs <- parse_arg(txt_ref)
+        reference[[ref_files[q]]] <- all_refs
       }
-      txt_ref <- readr::read_file(ref_file)
-      all_refs <- parse_arg(txt_ref)
-      reference <- all_refs
     }
   } else {
     stop("No function specified to test.")
