@@ -42,7 +42,7 @@ json_test <- function(
     }
     test_dir <- system.file(paste0("test/", test_id), package=package)
     if(!file.exists(test_dir)) {
-      stop(paste0("File ", test_file, " not found!"))
+      stop(paste0("Test folder ", test_dir, " not found!"))
     } else {
       message(paste0("Reading test(s) for ", test_dir, "..."))
     }
@@ -126,7 +126,7 @@ json_test <- function(
             calc <- get_nested_value(tmp, refkey)
             ref  <- reference[[key]][[refkey]]
             if(!do_checks) { # fail all checks for this test
-              sign <- "   x\t"
+              sign <- "   [ ]\t"
               message(paste0(sign, key, "::", refkey, " ( ? ", " == ", ref,")"))
               json2test::assert(test_id, paste0(key,": ", refkey), FALSE)
             } else {
@@ -145,7 +145,7 @@ json_test <- function(
               }
               if(is.null(calc)) {
                 json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
-                message(paste0(" - ", key, "::", refkey, " (NA)"))
+                message(paste0("   [ ]\t", key, "::", refkey, " (NA)"))
               } else {
                 result <- FALSE
                 if(class(ref_i) == "character") {
@@ -158,7 +158,7 @@ json_test <- function(
                     result <- json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
                   }
                 }
-                sign <- ifelse(!result, "   x\t", "   ✓\t")
+                sign <- ifelse(!result, "   [ ]\t", "   [✓]\t")
                 if(equal_i || class(ref) == "character") {
                   message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,")"))
                 } else {
