@@ -15,13 +15,15 @@ print_test_report <- function() {
                                                     "Total" = length(Result),
                                                     "Percent" = round(100*passed(Result)/length(Result),1))
     print(data.frame(tab))
-    cat(paste0("\n------------ Failed tests (",sum(res$Result != "OK"),"/",length(res[,1]),") ------------------\n"))
     if(sum(res$Result != "OK") > 0) {
-      print(res[res$Result != "OK",])
-    }
-    cat("----------------------------------------------------\n")
-    if(success < 100) {
-      stop("Not all tests were successful.")
+      cat(paste0("\n------------ Failed tests (",sum(res$Result != "OK"),"/",length(res[,1]),") ------------------\n"))
+      if(sum(res$Result != "OK") > 0) {
+        print(res[res$Result != "OK",])
+      }
+      cat("----------------------------------------------------\n")
+      if(success < 100) {
+        stop("Not all tests were successful.")
+      }
     }
   } else {
     stop("Sorry, no test results available.")
