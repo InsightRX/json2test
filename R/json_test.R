@@ -44,7 +44,8 @@ json_test <- function(
     if(!file.exists(test_dir)) {
       stop(paste0("Test folder ", test_dir, " not found!"))
     } else {
-      message(paste0("Reading test(s) for ", test_dir, "..."))
+      last_folder <- tail(strsplit(test_dir, "[/\\]")[[1]],1)
+      message(paste0("Reading test(s) for ", last_folder, "..."))
     }
     sel_tests <- list()
     d <- system.file(paste0("test/", test_id), package=package)
@@ -94,9 +95,9 @@ json_test <- function(
   for(key in names(sel_tests)) {
     if((is.null(reference[[key]][["skip"]]) || reference[[key]][["skip"]] == FALSE) && !(key %in% skip)) {
       if(!is.null(run)) { # just return the output
-        message(paste0("Returning output from ", func))
+        message(paste0("--> Returning output from ", func))
       } else {
-        message(paste0("Testing ", func, "::", key))
+        message(paste0("\n======== Testing ", func, "::", key, " ", paste(rep("=", 30-(length(func)+length(key))), collapse="")))
       }
       obj <- parse_json_test(sel_tests[[key]], parse_functions)
       if(list_as_args) {
@@ -113,20 +114,20 @@ json_test <- function(
         do_checks <- TRUE
         if(!is.null(tmp$error) && tmp$error) {
           if(is.null(reference[[key]][["error"]])) { # if error is not actually expected
-            message(paste0("Unexpected error:\n", paste(tmp, collapse="\n")))
+            message(paste0("--> Unexpected error:\n", paste(tmp, collapse="\n")))
             result <- FALSE
             do_checks <- FALSE
           }
         }
         if(!is.null(reference[[key]][["comment"]])) {
-          message(paste0("Comment: ", reference[[key]][["comment"]]))
+          message(paste0("--> Comment: ", reference[[key]][["comment"]]))
         }
         for(refkey in names(reference[[key]])) {
           if(!refkey %in% ignore_keys) {
             calc <- get_nested_value(tmp, refkey)
             ref  <- reference[[key]][[refkey]]
             if(!do_checks) { # fail all checks for this test
-              sign <- "   [ ]\t"
+              sign <- "  [ ]\t"
               message(paste0(sign, key, "::", refkey, " ( ? ", " == ", ref,")"))
               json2test::assert(test_id, paste0(key,": ", refkey), FALSE)
             } else {
@@ -145,7 +146,7 @@ json_test <- function(
               }
               if(is.null(calc)) {
                 json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
-                message(paste0("   [ ]\t", key, "::", refkey, " (NA)"))
+                message(paste0("  [ ]\t", key, "::", refkey, " (NA)"))
               } else {
                 result <- FALSE
                 if(class(ref_i) == "character") {
@@ -158,7 +159,7 @@ json_test <- function(
                     result <- json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
                   }
                 }
-                sign <- ifelse(!result, "   [ ]\t", "   [✓]\t")
+                sign <- ifelse(!result, "  [ ]\t", "  [✓]\t")
                 if(equal_i || class(ref) == "character") {
                   message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,")"))
                 } else {
