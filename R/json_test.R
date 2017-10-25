@@ -12,6 +12,7 @@
 #' @param list_as_args should the list elements from the JSON be used as arguments to the function? TRUE by default. If FALSE, the list as a whole will be passed to the `args` argument of the function.
 #' @param parse_functions list of functions to parse specific JSON tests data before calling the function. This is sometimes useful due to the back-serialization from JSON to R object.
 #' @param overwrite optional list specifying what keys of test JSON to manually overwrite with given values
+#' @param fail_if_not_exists fail if folder with JSON does not exist?
 #' @export
 json_test <- function(
   func = NULL,
@@ -25,7 +26,8 @@ json_test <- function(
   list_as_args = TRUE,
   ignore_keys = c(),
   parse_functions = list(),
-  overwrite = NULL) {
+  overwrite = NULL,
+  fail_if_not_exists = TRUE) {
   if(!is.null(run)) {
     if(length(run) > 1) {
       stop("Sorry, only a result object for a single test can be returned.")
@@ -42,7 +44,13 @@ json_test <- function(
     }
     test_dir <- system.file(paste0("test/", test_id), package=package)
     if(!file.exists(test_dir)) {
-      stop(paste0("Test folder ", test_dir, " not found!"))
+      msg <- paste0("\nWarning: test folder for ", test_id, " not found!")
+      if(!fail_if_not_exists) {
+        message(msg)
+        return()
+      } else {
+        stop(msg)
+      }
     } else {
       last_folder <- tail(strsplit(test_dir, "[/\\]")[[1]],1)
       message(paste0("Reading test(s) for ", last_folder, "..."))
