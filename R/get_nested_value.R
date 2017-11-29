@@ -7,14 +7,18 @@ get_nested_value <- function(l = list(), address = "") {
     if(!is.null(address) && length(address) > 0) {
       if(stringr::str_detect(address, ".")) {
         vec <- unlist(stringr::str_split(address, "\\."))
-        if(!is.na(as.numeric(vec[1]))) {
-          if(class(l) == "list") {
-            return(get_nested_value(l[[as.numeric(vec[1])]], stringr::str_c(vec[-1], collapse = ".")))
-          } else {
-            return(get_nested_value(l[as.numeric(vec[1])], stringr::str_c(vec[-1], collapse = ".")))
-          }
+        if(length(vec) == 2 && vec[2] %in% c("length", "nrow", "ncol")) {
+          return(do.call(vec[2], list(l[[vec[1]]])))
         } else {
-          return(get_nested_value(l[[vec[1]]], stringr::str_c(vec[-1], collapse = ".")))
+          if(!is.na(as.numeric(vec[1]))) {
+            if(class(l) == "list") {
+              return(get_nested_value(l[[as.numeric(vec[1])]], stringr::str_c(vec[-1], collapse = ".")))
+            } else {
+              return(get_nested_value(l[as.numeric(vec[1])], stringr::str_c(vec[-1], collapse = ".")))
+            }
+          } else {
+            return(get_nested_value(l[[vec[1]]], stringr::str_c(vec[-1], collapse = ".")))
+          }
         }
       } else {
         if(!is.na(as.numeric(address))) { # then treat l as vector, not list!
