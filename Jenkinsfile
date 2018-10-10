@@ -5,7 +5,7 @@
       label 'r-slave'
     }
     stages{
-      stage('Dependencies - build json2test') {
+      stage('Build - json2test') {
         steps {
           echo 'building json2test'
           sh """
