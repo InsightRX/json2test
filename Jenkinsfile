@@ -17,7 +17,7 @@
             fi
             git clone git@github.com:InsightRX/json2test.git
             cd json2test
-            chmod +x /slack_notification.sh
+            sudo chmod +x slack_notification.sh
             R CMD INSTALL . --library=/usr/lib/R/site-library || { export STATUS=failed
             ./slack_notification.sh
             exit 1
