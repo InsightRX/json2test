@@ -3,7 +3,6 @@
 #' @export
 print_test_report <- function() {
   if(!is.null(test_result_collector)) {
-    cat("\n-------------- Test report ------------------------\n")
     res <- data.frame(test_result_collector)
     colnames(res) <- c("Function", "Test", "Result")
     success <- sum(res$Result == "OK")/length(res[,1])*100
@@ -16,16 +15,17 @@ print_test_report <- function() {
                        "Failed" = failed(Result),
                        "Total" = length(Result),
                        "Percent" = round(100*passed(Result)/length(Result),1))
-    print(data.frame(tab))
     if(sum(res$Result != "OK") > 0) {
-      cat(paste0("\n------------ Failed tests (",sum(res$Result != "OK"),"/",length(res[,1]),") ------------------\n"))
-      if(sum(res$Result != "OK") > 0) {
-        print(res[res$Result != "OK", c("Function", "Test")])
-      }
-      cat("----------------------------------------------------\n")
-      if(success < 100) {
-        stop("Not all tests were successful.")
-      }
+       cat(paste0("\n------------ Failed tests (",sum(res$Result != "OK"),"/",length(res[,1]),") ------------------\n"))
+       if(sum(res$Result != "OK") > 0) {
+         print(res[res$Result != "OK", c("Function", "Test")])
+       }
+    }
+    cat("\n-------------- Test report ------------------------\n")
+    print(data.frame(tab %>% dplyr::arrange(-Percent)))
+    cat("----------------------------------------------------\n")
+    if(success < 100) {
+      stop("Not all tests were successful.")
     }
   } else {
     stop("Sorry, no test results available.")
