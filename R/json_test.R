@@ -13,6 +13,7 @@
 #' @param parse_functions list of functions to parse specific JSON tests data before calling the function. This is sometimes useful due to the back-serialization from JSON to R object.
 #' @param overwrite optional list specifying what keys of test JSON to manually overwrite with given values
 #' @param fail_if_not_exists fail if folder with JSON does not exist?
+#' @param use_testthat use testthat library
 #' @export
 json_test <- function(
   func = NULL,
@@ -27,7 +28,8 @@ json_test <- function(
   ignore_keys = c(),
   parse_functions = list(),
   overwrite = NULL,
-  fail_if_not_exists = TRUE) {
+  fail_if_not_exists = TRUE,
+  lib = "testit") {
   if(!is.null(run)) {
     if(length(run) > 1) {
       stop("Sorry, only a result object for a single test can be returned.")
@@ -137,7 +139,11 @@ json_test <- function(
             if(!do_checks) { # fail all checks for this test
               sign <- "  [ ]\t"
               message(paste0(sign, key, "::", refkey, " ( ? ", " == ", ref,")"))
-              json2test::assert(test_id, paste0(key,": ", refkey), FALSE)
+              if(lib == "testthat") {
+                testthat::expect(FALSE, paste0(test_id, " : ", key, " / ", refkey))
+              } else {
+                json2test::assert(test_id, paste0(key,": ", refkey), FALSE)
+              }
             } else {
               equal_i <- TRUE
               ref_i <- ref
@@ -153,18 +159,38 @@ json_test <- function(
                 delta_i <- delta
               }
               if(is.null(calc)) {
-                json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
+                if(lib == "testthat") {
+                  ref_i == "NA"
+                  testthat::expect(ref_i == "NA", paste0(test_id, " : ", key, " / ", refkey))
+                } else {
+                  json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
+                }
                 message(paste0("  [ ]\t", key, "::", refkey, " (NA)"))
               } else {
                 result <- FALSE
                 if(class(ref_i) == "character") {
-                  result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
+                  if(lib == "testthat") {
+                    result <- ref_i == calc
+                    testthat::expect(ref_i == calc, paste0(test_id, " : ", key, " / ", refkey))
+                  } else {
+                    result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
+                  }
                 }
                 if(class(ref_i) %in% c("numeric", "integer")) {
                   if(equal_i) {
-                    result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
+                    if(lib == "testthat") {
+                      result <- ref_i == calc
+                      testthat::expect(ref_i == calc, paste0(test_id, " : ", key, " / ", refkey))
+                    } else {
+                      result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
+                    }
                   } else {
-                    result <- json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
+                    if(lib == "testthat") {
+                      result <- abs((ref_i - calc) / ref_i) < delta_i
+                      testthat::expect(abs((ref_i - calc) / ref_i) < delta_i, paste0(test_id, " : ", key, " / ", refkey))
+                    } else {
+                      result <- json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
+                    }
                   }
                 }
                 sign <- ifelse(!result, "  [ ]\t", "  [✓]\t")

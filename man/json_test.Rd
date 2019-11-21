@@ -4,10 +4,22 @@
 \alias{json_test}
 \title{Wrapper function to run tests and compare with reference}
 \usage{
-json_test(func = NULL, package = NULL, test_id = NULL, tests = NULL,
-  reference = NULL, delta = NULL, run = NULL, skip = c(),
-  list_as_args = TRUE, ignore_keys = c(), parse_functions = list(),
-  overwrite = NULL)
+json_test(
+  func = NULL,
+  package = NULL,
+  test_id = NULL,
+  tests = NULL,
+  reference = NULL,
+  delta = NULL,
+  run = NULL,
+  skip = c(),
+  list_as_args = TRUE,
+  ignore_keys = c(),
+  parse_functions = list(),
+  overwrite = NULL,
+  fail_if_not_exists = TRUE,
+  use_testthat = FALSE
+)
 }
 \arguments{
 \item{func}{linking to test/reference JSON and function in package to test}
@@ -33,6 +45,10 @@ json_test(func = NULL, package = NULL, test_id = NULL, tests = NULL,
 \item{parse_functions}{list of functions to parse specific JSON tests data before calling the function. This is sometimes useful due to the back-serialization from JSON to R object.}
 
 \item{overwrite}{optional list specifying what keys of test JSON to manually overwrite with given values}
+
+\item{fail_if_not_exists}{fail if folder with JSON does not exist?}
+
+\item{use_testthat}{use testthat library}
 }
 \description{
 Wrapper function to run tests and compare with reference
