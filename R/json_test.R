@@ -8,12 +8,13 @@
 #' @param reference list of reference values
 #' @param delta relative allowed imprecision, default is 0.03. Overrides value specified in reference JSON.
 #' @param ignore_keys ignore specific keys in reference JSON, e.g. to allow for comments
-#' @param run a specific test to run only, not check. The output object will be returned.
+#' @param run a specific test to run only, no actual check. The output object will be returned.
 #' @param list_as_args should the list elements from the JSON be used as arguments to the function? TRUE by default. If FALSE, the list as a whole will be passed to the `args` argument of the function.
 #' @param parse_functions list of functions to parse specific JSON tests data before calling the function. This is sometimes useful due to the back-serialization from JSON to R object.
 #' @param overwrite optional list specifying what keys of test JSON to manually overwrite with given values
 #' @param fail_if_not_exists fail if folder with JSON does not exist?
 #' @param use_testthat use testthat library
+#' @param verbose verbosity
 #' @export
 json_test <- function(
   func = NULL,
@@ -29,7 +30,8 @@ json_test <- function(
   parse_functions = list(),
   overwrite = NULL,
   fail_if_not_exists = TRUE,
-  lib = "testit") {
+  lib = "testit",
+  verbose = FALSE) {
   if(!is.null(run)) {
     if(length(run) > 1) {
       stop("Sorry, only a result object for a single test can be returned.")
@@ -45,6 +47,7 @@ json_test <- function(
       test_id <- func
     }
     test_dir <- system.file(paste0("test/", test_id), package=package)
+    if(verbose) message(paste0("Looking in folder ", test_dir))
     if(!file.exists(test_dir)) {
       msg <- paste0("\nWarning: test folder for ", test_id, " not found!")
       if(!fail_if_not_exists) {
@@ -55,12 +58,13 @@ json_test <- function(
       }
     } else {
       last_folder <- tail(strsplit(test_dir, "[/\\]")[[1]],1)
-      message(paste0("Reading test(s) for ", last_folder, "..."))
+      message(paste0("\nReading test(s) for ", last_folder, "..."))
     }
     sel_tests <- list()
     d <- system.file(paste0("test/", test_id), package=package)
     test_files <- stringr::str_replace_all(
       dir(d), "\\.json", "")
+    if(verbose) message(paste0("Found tests: ", paste(test_files, collapse = ", ")))
     suppressWarnings({
       for(q in seq(test_files)) {
         txt <- readr::read_file(paste0(d, "/", test_files[q], ".json"))
@@ -103,11 +107,12 @@ json_test <- function(
     sel_tests <- sel_tests[tests]
   }
   for(key in names(sel_tests)) {
+    if(verbose) message(paste0("Running test: ", key))
     if((is.null(reference[[key]][["skip"]]) || reference[[key]][["skip"]] == FALSE) && !(key %in% skip)) {
       if(!is.null(run)) { # just return the output
-        message(paste0("--> Returning output from ", func))
+        message(paste0("   Returning output from ", func))
       } else {
-        message(paste0("\n======== Testing ", func, "::", key, " ", paste(rep("=", 30-(length(func)+length(key))), collapse="")))
+        message(paste0("\n=== Testing ", func, "::", key, " ", paste(rep("=", 10), collapse="")))
       }
       obj <- parse_json_test(sel_tests[[key]], parse_functions)
       if(list_as_args) {
@@ -124,20 +129,20 @@ json_test <- function(
         do_checks <- TRUE
         if(!is.null(tmp$error) && tmp$error) {
           if(is.null(reference[[key]][["error"]])) { # if error is not actually expected
-            message(paste0("--> Unexpected error:\n", paste(tmp, collapse="\n")))
+            message(paste0("    Unexpected error:\n", paste(tmp, collapse="\n")))
             result <- FALSE
             do_checks <- FALSE
           }
         }
         if(!is.null(reference[[key]][["comment"]])) {
-          message(paste0("--> Comment: ", reference[[key]][["comment"]]))
+          message(paste0("    Comment: ", reference[[key]][["comment"]]))
         }
         for(refkey in names(reference[[key]])) {
           if(!refkey %in% ignore_keys) {
             calc <- get_nested_value(tmp, refkey)
             ref  <- reference[[key]][[refkey]]
             if(!do_checks) { # fail all checks for this test
-              sign <- "  [ ]\t"
+              sign <- "\t[ ]\t"
               message(paste0(sign, key, "::", refkey, " ( ? ", " == ", ref,")"))
               if(lib == "testthat") {
                 testthat::expect(FALSE, paste0(test_id, " : ", key, " / ", refkey))
@@ -165,7 +170,7 @@ json_test <- function(
                 } else {
                   json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
                 }
-                message(paste0("  [ ]\t", key, "::", refkey, " (NA)"))
+                message(paste0("\t[ ]\t", key, "::", refkey, " (NA)"))
               } else {
                 result <- FALSE
                 if(class(ref_i) == "character") {
@@ -193,7 +198,7 @@ json_test <- function(
                     }
                   }
                 }
-                sign <- ifelse(!result, "  [ ]\t", "  [✓]\t")
+                sign <- ifelse(!result, "\t[ ]\t", "  [✓]\t")
                 if(equal_i || class(ref) == "character") {
                   message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,")"))
                 } else {

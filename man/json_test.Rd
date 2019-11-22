@@ -18,7 +18,8 @@ json_test(
   parse_functions = list(),
   overwrite = NULL,
   fail_if_not_exists = TRUE,
-  use_testthat = FALSE
+  lib = "testit",
+  verbose = FALSE
 )
 }
 \arguments{
@@ -34,7 +35,7 @@ json_test(
 
 \item{delta}{relative allowed imprecision, default is 0.03. Overrides value specified in reference JSON.}
 
-\item{run}{a specific test to run only, not check. The output object will be returned.}
+\item{run}{a specific test to run only, no actual check. The output object will be returned.}
 
 \item{skip}{a vector of tests to skip (default is to run all)}
 
@@ -47,6 +48,8 @@ json_test(
 \item{overwrite}{optional list specifying what keys of test JSON to manually overwrite with given values}
 
 \item{fail_if_not_exists}{fail if folder with JSON does not exist?}
+
+\item{verbose}{verbosity}
 
 \item{use_testthat}{use testthat library}
 }
