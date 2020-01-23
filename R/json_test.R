@@ -13,7 +13,7 @@
 #' @param parse_functions list of functions to parse specific JSON tests data before calling the function. This is sometimes useful due to the back-serialization from JSON to R object.
 #' @param overwrite optional list specifying what keys of test JSON to manually overwrite with given values
 #' @param fail_if_not_exists fail if folder with JSON does not exist?
-#' @param use_testthat use testthat library
+#' @param lib which test library to use (testit or testthat)
 #' @param verbose verbosity
 #' @export
 json_test <- function(

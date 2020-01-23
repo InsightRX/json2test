@@ -49,9 +49,9 @@ json_test(
 
 \item{fail_if_not_exists}{fail if folder with JSON does not exist?}
 
-\item{verbose}{verbosity}
+\item{lib}{which test library to use (testit or testthat)}
 
-\item{use_testthat}{use testthat library}
+\item{verbose}{verbosity}
 }
 \description{
 Wrapper function to run tests and compare with reference

@@ -24,6 +24,7 @@
             ./slack_notification.sh
             exit 1
             }
+            R CMD check . --no-manual
           """
         }
       }
