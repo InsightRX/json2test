@@ -40,28 +40,32 @@
 #'
 #' # no message
 #' assert(!FALSE, TRUE, is.na(NA))
-assert = function(func, fact, ...) {
+assert <- function(func, fact, ...) {
   if(!exists("test_result_collector")) {
     test_result_collector <<- c()
   }
-  fact_char = is.character(fact)
+  fact_char <- is.character(fact)
   test_result_collector <<- rbind(test_result_collector, cbind(func, fact, "OK"))
-  n = length(ll <- if (fact_char) list(...) else list(fact, ...))
+  n <- length(ll <- if (fact_char) list(...) else list(fact, ...))
   if (n == 0L) {
     return(invisible())
   }
-  mc = match.call(); if (fact_char) mc[['fact']] = NULL
-  for (i in 1L:n) if (!all_true(r <- ll[[i]])) {
-    msg <- sprintf(ngettext(length(r), '%s is not TRUE', '%s are not all TRUE'),
-                   deparse_key(mc[[i + 1]]))
-    test_result_collector <<- rbind(test_result_collector, cbind(func, fact, msg))
-    # if (fact_char) message('assertion failed: ', fact)
-    if(is.null(test_result_collector)) {
-      stop(msg, call. = FALSE, domain = NA)
+  mc <- match.call()
+  if (fact_char) {
+    mc[['fact']] <- NULL
+  }
+  for (i in 1L:n) {
+    if (!all_true(r <- ll[[i]])) {
+      msg <- sprintf(ngettext(length(r), '%s is not TRUE', '%s are not all TRUE'),
+                     deparse_key(mc[[i + 1]]))
+      test_result_collector <<- rbind(test_result_collector, cbind(func, fact, msg))
+      if(is.null(test_result_collector)) {
+        stop(msg, call. = FALSE, domain = NA)
+      }
+      return(FALSE)
+    } else {
+      return(TRUE)
     }
-    return(FALSE)
-  } else {
-    return(TRUE)
   }
 }
 

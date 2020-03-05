@@ -132,18 +132,20 @@ json_test <- function(
             message(paste0("    Unexpected error:\n", paste(tmp, collapse="\n")))
             result <- FALSE
             do_checks <- FALSE
+          } else {
+            reference[[key]][["error"]] <- NULL
           }
         }
         if(!is.null(reference[[key]][["comment"]])) {
-          message(paste0("    Comment: ", reference[[key]][["comment"]]))
+          message(paste0("  Comment: ", reference[[key]][["comment"]]))
         }
         for(refkey in names(reference[[key]])) {
           if(!refkey %in% ignore_keys) {
             calc <- get_nested_value(tmp, refkey)
             ref  <- reference[[key]][[refkey]]
             if(!do_checks) { # fail all checks for this test
-              sign <- "\t[ ]\t"
-              message(paste0(sign, key, "::", refkey, " ( ? ", " == ", ref,")"))
+              sign <- "  [ ]\t"
+              message(paste0(sign, key, "::", refkey, " ( ? ", " == ", ref,")", collapse="\n"))
               if(lib == "testthat") {
                 testthat::expect(FALSE, paste0(test_id, " : ", key, " / ", refkey))
               } else {
@@ -170,15 +172,19 @@ json_test <- function(
                 } else {
                   json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
                 }
-                message(paste0("\t[ ]\t", key, "::", refkey, " (NA)"))
+                message(paste0("  [ ]\t", key, "::", refkey, " (NA)"))
               } else {
                 result <- FALSE
                 if(class(ref_i) == "character") {
-                  if(lib == "testthat") {
+                  if(ref_i == "$exists") {
+                    result <- !is.null(calc) && !is.na(calc) && length(calc) > 0
+                  } else {
                     result <- ref_i == calc
+                  }
+                  if(lib == "testthat") {
                     testthat::expect(ref_i == calc, paste0(test_id, " : ", key, " / ", refkey))
                   } else {
-                    result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
+                    result <- json2test::assert(test_id, paste0(key,": ", refkey), result)
                   }
                 }
                 if(class(ref_i) %in% c("numeric", "integer")) {
@@ -198,7 +204,7 @@ json_test <- function(
                     }
                   }
                 }
-                sign <- ifelse(!result, "\t[ ]\t", "  [✓]\t")
+                sign <- ifelse(!result, "  [ ]\t", "  [✓]\t")
                 if(equal_i || class(ref) == "character") {
                   message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,")"))
                 } else {
