@@ -5,7 +5,7 @@
 get_nested_value <- function(l = list(), address = "") {
   suppressWarnings(
     if(!is.null(address) && length(address) > 0) {
-      if(stringr::str_detect(address, ".")) {
+      if(stringr::str_detect(address, "\\.")) {
         vec <- unlist(stringr::str_split(address, "\\."))
         if(length(vec) == 2 && vec[2] %in% c("length", "nrow", "ncol")) {
           return(do.call(vec[2], list(l[[vec[1]]])))
