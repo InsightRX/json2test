@@ -187,8 +187,8 @@ json_test <- function(
                     result <- json2test::assert(test_id, paste0(key,": ", refkey), result)
                   }
                 }
-                if(class(ref_i) %in% c("numeric", "integer")) {
-                  if(equal_i) {
+                if(class(ref_i) %in% c("numeric", "integer", "logical")) {
+                  if(equal_i || class(ref_i) == "logical") {
                     if(lib == "testthat") {
                       result <- ref_i == calc
                       testthat::expect(ref_i == calc, paste0(test_id, " : ", key, " / ", refkey))
