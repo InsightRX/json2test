@@ -178,6 +178,10 @@ json_test <- function(
                 if(class(ref_i) == "character") {
                   if(ref_i == "$exists") {
                     result <- !is.null(calc) && !is.na(calc) && length(calc) > 0
+                  } else if (ref_i == "$na") {
+                    result <- is.na(calc)
+                  } else if (ref_i == "$null") {
+                    result <- is.null(calc)
                   } else {
                     result <- ref_i == calc
                   }
