@@ -5,6 +5,7 @@
 #' @param test_id specifies test/reference JSON to use, i.e. /home/user/R/3.3/package_name/test/<test_id>.json. If not specified, assumes `func` is used as `test_id`.
 #' @param tests a vector of tests to run
 #' @param skip a vector of tests to skip (default is to run all)
+#' @param force a vector of test to override potential `skip`.
 #' @param reference list of reference values
 #' @param delta relative allowed imprecision, default is 0.03. Overrides value specified in reference JSON.
 #' @param ignore_keys ignore specific keys in reference JSON, e.g. to allow for comments
@@ -23,8 +24,10 @@ json_test <- function(
   tests = NULL,
   reference = NULL,
   delta = NULL,
+  max_time = NULL,
   run = NULL,
   skip = c(),
+  force = c(),
   list_as_args = TRUE,
   ignore_keys = c(),
   parse_functions = list(),
@@ -108,17 +111,27 @@ json_test <- function(
   }
   for(key in names(sel_tests)) {
     if(verbose) message(paste0("Running test: ", key))
-    if((is.null(reference[[key]][["skip"]]) || reference[[key]][["skip"]] == FALSE) && !(key %in% skip)) {
+    if(((is.null(reference[[key]][["skip"]]) || reference[[key]][["skip"]] == FALSE) || key %in% force) && !(key %in% skip)) {
       if(!is.null(run)) { # just return the output
         message(paste0("   Returning output from ", func))
       } else {
         message(paste0("\n=== Testing ", func, "::", key, " ", paste(rep("=", 10), collapse="")))
       }
       obj <- parse_json_test(sel_tests[[key]], parse_functions)
+      time_a <- Sys.time()
       if(list_as_args) {
         do.call(what = "fnc", args = obj)
       } else {
         tmp <- fnc(args = obj)
+      }
+      time_b <- Sys.time()
+      time <- round(as.numeric(time_b - time_a), 2)
+      if(!is.null(max_time)) {
+        if(lib == "testthat") {
+          testthat::expect(time < max_time, paste0("Time for ", test_id, " < ", max_time, " seconds"))
+        } else {
+          json2test::assert(test_id,  paste0("Time for ", key, " < ", max_time), time < max_time, time = time)
+        }
       }
       if(!is.null(run)) { # just return the output
         return(tmp)
@@ -149,7 +162,7 @@ json_test <- function(
               if(lib == "testthat") {
                 testthat::expect(FALSE, paste0(test_id, " : ", key, " / ", refkey))
               } else {
-                json2test::assert(test_id, paste0(key,": ", refkey), FALSE)
+                json2test::assert(test_id, paste0(key,": ", refkey), FALSE, time = time)
               }
             } else {
               equal_i <- TRUE
@@ -170,9 +183,9 @@ json_test <- function(
                   ref_i == "NA"
                   testthat::expect(ref_i == "NA", paste0(test_id, " : ", key, " / ", refkey))
                 } else {
-                  json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA")
+                  json2test::assert(test_id, paste0(key,": ", refkey, " (NA)"), ref_i == "NA", time = time)
                 }
-                message(paste0("  [ ]\t", key, "::", refkey, " (NA)"))
+                message(paste0(ifelse(ref_i == "NA", "  [N]\t", "  [ ]\t"), key, "::", refkey, " (NA)"))
               } else {
                 result <- FALSE
                 if(class(ref_i) == "character") {
@@ -188,7 +201,7 @@ json_test <- function(
                   if(lib == "testthat") {
                     testthat::expect(ref_i == calc, paste0(test_id, " : ", key, " / ", refkey))
                   } else {
-                    result <- json2test::assert(test_id, paste0(key,": ", refkey), result)
+                    result <- json2test::assert(test_id, paste0(key,": ", refkey), result, time = time)
                   }
                 }
                 if(class(ref_i) %in% c("numeric", "integer", "logical")) {
@@ -197,14 +210,14 @@ json_test <- function(
                       result <- ref_i == calc
                       testthat::expect(ref_i == calc, paste0(test_id, " : ", key, " / ", refkey))
                     } else {
-                      result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc)
+                      result <- json2test::assert(test_id, paste0(key,": ", refkey), ref_i == calc, time = time)
                     }
                   } else {
                     if(lib == "testthat") {
                       result <- abs((ref_i - calc) / ref_i) < delta_i
                       testthat::expect(abs((ref_i - calc) / ref_i) < delta_i, paste0(test_id, " : ", key, " / ", refkey))
                     } else {
-                      result <- json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i )
+                      result <- json2test::assert(test_id, paste0(key,": ", refkey), abs((ref_i - calc) / ref_i) < delta_i, time = time)
                     }
                   }
                 }
@@ -223,4 +236,5 @@ json_test <- function(
       message(paste0("Skipping ", func, "::", key))
     }
   }
+  names(test_result_collector) <- c("func", "fact", "result", "time")
 }

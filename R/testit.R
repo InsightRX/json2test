@@ -40,12 +40,12 @@
 #'
 #' # no message
 #' assert(!FALSE, TRUE, is.na(NA))
-assert <- function(func, fact, ...) {
+assert <- function(func, fact, time = NA, ...) {
   if(!exists("test_result_collector")) {
     test_result_collector <<- c()
   }
   fact_char <- is.character(fact)
-  test_result_collector <<- rbind(test_result_collector, cbind(func, fact, "OK"))
+  test_result_collector <<- rbind(test_result_collector, cbind(func, fact, "OK", time))
   n <- length(ll <- if (fact_char) list(...) else list(fact, ...))
   if (n == 0L) {
     return(invisible())
@@ -58,7 +58,7 @@ assert <- function(func, fact, ...) {
     if (!all_true(r <- ll[[i]])) {
       msg <- sprintf(ngettext(length(r), '%s is not TRUE', '%s are not all TRUE'),
                      deparse_key(mc[[i + 1]]))
-      test_result_collector <<- rbind(test_result_collector, cbind(func, fact, msg))
+      test_result_collector <<- rbind(test_result_collector, cbind(func, fact, msg, time))
       if(is.null(test_result_collector)) {
         stop(msg, call. = FALSE, domain = NA)
       }
