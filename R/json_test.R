@@ -70,9 +70,8 @@ json_test <- function(
     if(verbose) message(paste0("Found tests: ", paste(test_files, collapse = ", ")))
     suppressWarnings({
       for(q in seq(test_files)) {
-        txt <- readr::read_file(paste0(d, "/", test_files[q], ".json"))
-        tmp <- parse_arg(txt)
-        sel_tests[[test_files[q]]] <- tmp
+        tmp <- paste0(readLines(paste0(d, "/", test_files[q], ".json")), collapse="\n")
+        sel_tests[[test_files[q]]] <- parse_arg(tmp)
         if(!is.null(overwrite)) {
           for (t in seq(sel_tests)) {
             for(w in names(overwrite)) {
@@ -97,9 +96,8 @@ json_test <- function(
         if(!file.exists(paste0(d, "/", ref_files[q], ".json"))) {
           stop(paste0("Reference file missing for this test: ", ref_files[q]))
         }
-        txt_ref <- readr::read_file(paste0(d, "/", ref_files[q], ".json"))
-        all_refs <- parse_arg(txt_ref)
-        reference[[ref_files[q]]] <- all_refs
+        all_refs <- paste0(readLines(paste0(d, "/", ref_files[q], ".json")), collapse="\n")
+        reference[[ref_files[q]]] <- parse_arg(all_refs)
       }
     }
   } else {

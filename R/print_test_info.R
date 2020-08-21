@@ -7,7 +7,7 @@ print_test_info <- function(package = NULL) {
     tests <- dir(system.file("/test", package=package))
     tab <- c()
     for(key in tests) {
-      tmp <- rjson::fromJSON(file = system.file(paste0("test/", key), package = "insightrxr"))
+      tmp <- jsonlite::fromJSON(file = system.file(paste0("test/", key), package = "insightrxr"))
       module <- stringr::str_replace_all(key, "(.json)", "")
       tab <- rbind(tab, cbind(module, length(names(tmp))))
     }
