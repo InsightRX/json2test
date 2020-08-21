@@ -8,7 +8,7 @@ print_test_info <- function(package = NULL) {
     tab <- c()
     for(key in tests) {
       tmp <- jsonlite::fromJSON(file = system.file(paste0("test/", key), package = "insightrxr"))
-      module <- stringr::str_replace_all(key, "(.json)", "")
+      module <- irxtools::str_replace_all(key, "(.json)", "")
       tab <- rbind(tab, cbind(module, length(names(tmp))))
     }
     tab <- data.frame(tab)

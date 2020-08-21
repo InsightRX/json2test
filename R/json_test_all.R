@@ -19,7 +19,7 @@ json_test_all <- function(
     tests <- tests[!tests %in% skip_func]
   }
   for(key in tests) {
-    key <- stringr::str_replace(key, ".json", "")
+    key <- irxtools::str_replace(key, ".json", "")
     print(key)
     json_test(func = key, package = package, ...)
   }

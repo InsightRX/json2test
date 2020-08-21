@@ -5,19 +5,19 @@
 get_nested_value <- function(l = list(), address = "") {
   suppressWarnings(
     if(!is.null(address) && length(address) > 0) {
-      if(stringr::str_detect(address, "\\.")) {
-        vec <- unlist(stringr::str_split(address, "\\."))
+      if(irxtools::str_detect(address, "\\.")) {
+        vec <- unlist(irxtools::str_split(address, "\\."))
         if(length(vec) == 2 && vec[2] %in% c("length", "nrow", "ncol")) {
           return(do.call(vec[2], list(l[[vec[1]]])))
         } else {
           if(!is.na(as.numeric(vec[1]))) {
             if(class(l) == "list") {
-              return(get_nested_value(l[[as.numeric(vec[1])]], stringr::str_c(vec[-1], collapse = ".")))
+              return(get_nested_value(l[[as.numeric(vec[1])]], paste0(vec[-1], collapse = ".")))
             } else {
-              return(get_nested_value(l[as.numeric(vec[1])], stringr::str_c(vec[-1], collapse = ".")))
+              return(get_nested_value(l[as.numeric(vec[1])], paste0(vec[-1], collapse = ".")))
             }
           } else {
-            return(get_nested_value(l[[vec[1]]], stringr::str_c(vec[-1], collapse = ".")))
+            return(get_nested_value(l[[vec[1]]], paste0(vec[-1], collapse = ".")))
           }
         }
       } else {

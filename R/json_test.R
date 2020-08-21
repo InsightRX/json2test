@@ -65,7 +65,7 @@ json_test <- function(
     }
     sel_tests <- list()
     d <- system.file(paste0("test/", test_id), package=package)
-    test_files <- stringr::str_replace_all(
+    test_files <- irxtools::str_replace_all(
       dir(d), "\\.json", "")
     if(verbose) message(paste0("Found tests: ", paste(test_files, collapse = ", ")))
     suppressWarnings({
@@ -89,7 +89,7 @@ json_test <- function(
       ref_dir <- system.file(paste0("reference/", test_id), package = package)
       sel_ref <- list()
       d <- system.file(paste0("reference/", test_id), package=package)
-      ref_files <- stringr::str_replace_all(
+      ref_files <- irxtools::str_replace_all(
         dir(d), "\\.json", "")
       # ref_file <- system.file(paste0("reference/", test_id, ".json"), package = package)
       for(q in seq(ref_files)) {
