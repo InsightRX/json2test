@@ -1,13 +1,14 @@
 Package: json2test
 Type: Package
 Title: Run R package tests specified in JSON
-Version: 0.1.12
+Version: 0.1.13
 Author: Ron Keizer
 Maintainer: Ron Keizer <ronkeizer@gmail.com>
 Description: R library to allow tests and reference values to be
         specfied in JSON format. Primarily useful for functional
         testing.
-Imports: covr, jsonlite, testthat, irxtools
+Imports: jsonlite, irxtools
+Suggests: covr, testthat
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
