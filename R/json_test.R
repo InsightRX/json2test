@@ -167,7 +167,7 @@ json_test <- function(
             } else {
               equal_i <- TRUE
               ref_i <- ref
-              if(class(ref) == "list" && !is.null(ref$value) && !is.null(ref$delta)) {
+              if(class(ref) == "list" && !is.null(ref$value)) {
                 ref_i <- ref$value
                 if(!is.null(ref$delta)) {
                   equal_i <- FALSE
