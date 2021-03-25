@@ -5,7 +5,7 @@
 \alias{\%==\%}
 \title{Assertions with a message}
 \usage{
-assert(func, fact, ...)
+assert(func, fact, time = NA, ...)
 
 x \%==\% y
 }
