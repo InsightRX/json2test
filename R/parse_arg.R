@@ -6,7 +6,7 @@ parse_arg <- function(x){
 
   #special for json obj
   if(inherits(x, "AsIs")){
-    class(x) <- utils::tail(class(x), -1);
+    class(x) <- utils::tail(class(x), -1)
     return(x);
   }
 
@@ -15,9 +15,9 @@ parse_arg <- function(x){
 
   #if string starts with { or [ we test for json
   if(jsonlite::validate(x)) {
-    return(jsonlite::fromJSON(x));
+    return(jsonlite::fromJSON(x))
   }
 
   #failed to parse argument
-  stop("Invalid argument: ", x, "\n.Cannot be parsed to json.");
+  stop("Invalid argument: ", x, "\n.Cannot be parsed to json.")
 }
