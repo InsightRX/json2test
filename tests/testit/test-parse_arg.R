@@ -27,3 +27,5 @@ testit::assert("Handles recursive lists", {
 testit::assert("Handles empty json", {
    class(parse_arg("{}")) == "list"
 })
+
+testit::has_error(parse_arg("{"), silent = TRUE)

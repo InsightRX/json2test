@@ -14,10 +14,8 @@ parse_arg <- function(x){
   x <- as.character(x)
 
   #if string starts with { or [ we test for json
-  if(grepl("^[ \t\r\n]*(\\{|\\[)", x)) {
-    if(jsonlite::validate(x)) {
-      return(jsonlite::fromJSON(x));
-    }
+  if(jsonlite::validate(x)) {
+    return(jsonlite::fromJSON(x));
   }
 
   #failed to parse argument
