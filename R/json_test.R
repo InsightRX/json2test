@@ -223,7 +223,7 @@ json_test <- function(
                     }
                   }
                 }
-                sign <- ifelse(!result, "  [ ]\t", "  [✓]\t")
+                sign <- ifelse(!result, "  [ ]\t", "  [\u2713]\t")
                 if(equal_i || class(ref) == "character") {
                   message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,")"))
                 } else {

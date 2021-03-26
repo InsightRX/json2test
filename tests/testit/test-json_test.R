@@ -6,7 +6,7 @@ testit::assert("Compares test and ref json for function supplied as function: pa
                                   list_as_args = TRUE,
                                   fail_if_not_exists = FALSE),
                         type = "message")
-  any(grepl("✓", out))
+  any(grepl("\u2713", out))
 })
 
 testit::assert("Compares test and ref json for function supplied as function: fail", {
@@ -17,7 +17,7 @@ testit::assert("Compares test and ref json for function supplied as function: fa
                                   list_as_args = TRUE,
                                   fail_if_not_exists = FALSE),
                         type = "message")
-  !any(grepl("✓", out))
+  !any(grepl("\u2713", out))
 })
 
 
