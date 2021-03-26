@@ -18,6 +18,7 @@ testit::assert("Compares test and ref json for function supplied as function: fa
                                   fail_if_not_exists = FALSE),
                         type = "message")
   !any(grepl("\u2713", out))
+  any(grepl("\\[ \\]", out))
 })
 
 
