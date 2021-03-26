@@ -2,8 +2,8 @@
 % Please edit documentation in R/parse_arg.R
 \name{parse_arg}
 \alias{parse_arg}
-\title{Parse arguments
-Taken from opencpu, to remove dependencies for builds}
+\title{Parse string, assuming JSON format
+If arguments are not valid JSON, returns stop. Adapted from opencpu.}
 \usage{
 parse_arg(x)
 }
@@ -11,6 +11,6 @@ parse_arg(x)
 \item{x}{object}
 }
 \description{
-Parse arguments
-Taken from opencpu, to remove dependencies for builds
+Parse string, assuming JSON format
+If arguments are not valid JSON, returns stop. Adapted from opencpu.
 }

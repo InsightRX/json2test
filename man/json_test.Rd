@@ -11,8 +11,10 @@ json_test(
   tests = NULL,
   reference = NULL,
   delta = NULL,
+  max_time = NULL,
   run = NULL,
   skip = c(),
+  force = c(),
   list_as_args = TRUE,
   ignore_keys = c(),
   parse_functions = list(),
@@ -38,6 +40,8 @@ json_test(
 \item{run}{a specific test to run only, no actual check. The output object will be returned.}
 
 \item{skip}{a vector of tests to skip (default is to run all)}
+
+\item{force}{a vector of test to override potential `skip`.}
 
 \item{list_as_args}{should the list elements from the JSON be used as arguments to the function? TRUE by default. If FALSE, the list as a whole will be passed to the `args` argument of the function.}
 
