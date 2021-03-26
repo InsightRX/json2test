@@ -19,7 +19,7 @@
             cd json2test
             git checkout $GIT_BRANCH
             sudo chmod +x slack_notification.sh
-            sudo Rscript -e remove.packages('testit'); install.packages('testit', lib='/usr/lib/R/site-library', repos='http://cran.us.r-project.org', dependencies = TRUE)
+            sudo Rscript -e "remove.packages('testit'); install.packages('testit', lib='/usr/lib/R/site-library', repos='http://cran.us.r-project.org', dependencies = TRUE)"
             sudo Rscript -e "install.packages(c('tibble', 'testthat'), lib='/usr/lib/R/site-library', repos='https://cran.rstudio.com', dependencies = TRUE)"
             R CMD INSTALL . --library=/usr/lib/R/site-library || { export STATUS=failed
             ./slack_notification.sh
