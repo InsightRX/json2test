@@ -13,7 +13,6 @@ testit::assert("Parse numeric as number - decimal",{
   as.num(16.23) == 16.23
 })
 
-
 testit::assert("Parse factor as number - class", {
   is.numeric(as.num(factor(17)))
   as.num(factor(17)) == 17
@@ -24,4 +23,3 @@ testit::assert("Parse NULL as number", {
   is.numeric(as.num(NA))
 })
 
-#testit::assert("test fail", 9 == 6)
