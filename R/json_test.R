@@ -35,6 +35,7 @@ json_test <- function(
   fail_if_not_exists = TRUE,
   lib = "testit",
   verbose = FALSE) {
+
   if(!is.null(run)) {
     if(length(run) > 1) {
       stop("Sorry, only a result object for a single test can be returned.")
@@ -105,7 +106,10 @@ json_test <- function(
   } else {
     stop("No function specified to test.")
   }
-  fnc <- getExportedValue(package, func)
+  # fnc is an object of class function that is called to compute the json file read.
+  # func is a character string that gets printed out to allow for human-readable tracking of the testing process
+  fnc <- ifelse(is.function(func), func, getExportedValue(package, func))
+  func <- ifelse(is.function(func), deparse(match.call()$func), func)
   if(!is.null(tests)) {
     sel_tests <- sel_tests[tests]
   }
@@ -120,7 +124,7 @@ json_test <- function(
       obj <- parse_json_test(sel_tests[[key]], parse_functions)
       time_a <- Sys.time()
       if(list_as_args) {
-        do.call(what = "fnc", args = obj)
+        tmp <- do.call(what = "fnc", args = obj)
       } else {
         tmp <- fnc(args = obj)
       }
@@ -221,7 +225,7 @@ json_test <- function(
                     }
                   }
                 }
-                sign <- ifelse(!result, "  [ ]\t", "  [✓]\t")
+                sign <- ifelse(!result, "  [ ]\t", "  [\u2713]\t")
                 if(equal_i || class(ref) == "character") {
                   message(paste0(sign, key, "::", refkey, " (", calc , " == ", ref_i,")"))
                 } else {
