@@ -106,6 +106,8 @@ json_test <- function(
   } else {
     stop("No function specified to test.")
   }
+  # fnc is an object of class function that is called to compute the json file read.
+  # func is a character string that gets printed out to allow for human-readable tracking of the testing process
   fnc <- ifelse(is.function(func), func, getExportedValue(package, func))
   func <- ifelse(is.function(func), deparse(match.call()$func), func)
   if(!is.null(tests)) {
