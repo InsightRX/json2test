@@ -106,8 +106,8 @@ json_test <- function(
   } else {
     stop("No function specified to test.")
   }
-  fnc <- ifelse(class(func) == "function", func, getExportedValue(package, func))
-  func <- ifelse(class(func) == "function", deparse(match.call()$func), func)
+  fnc <- ifelse(is.function(func), func, getExportedValue(package, func))
+  func <- ifelse(is.function(func), deparse(match.call()$func), func)
   if(!is.null(tests)) {
     sel_tests <- sel_tests[tests]
   }
