@@ -7,9 +7,8 @@ Maintainer: Ron Keizer <ronkeizer@gmail.com>
 Description: R library to allow tests and reference values to be
         specfied in JSON format. Primarily useful for functional
         testing.
-Imports: jsonlite, irxtools
-Suggests: covr, testthat
+Imports: jsonlite, irxtools, testthat
+Suggests: testit
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
