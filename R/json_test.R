@@ -7,6 +7,7 @@
 #' @param skip a vector of tests to skip (default is to run all)
 #' @param force a vector of test to override potential `skip`.
 #' @param reference list of reference values
+#' @param max_time maximum time the test should take to run
 #' @param delta relative allowed imprecision, default is 0.03. Overrides value specified in reference JSON.
 #' @param ignore_keys ignore specific keys in reference JSON, e.g. to allow for comments
 #' @param run a specific test to run only, no actual check. The output object will be returned.

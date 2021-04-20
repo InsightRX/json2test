@@ -8,6 +8,7 @@
 #' @param fact a message for the assertions when any of them fails; treated the
 #'   same way as expressions in \code{...} if it is not a character string,
 #'   which means you do not have to provide a message to this function
+#' @param time time the test takes to run
 #' @param ... any number of R expressions, presumably to return vectors of
 #'   \code{TRUE}'s (if \code{FALSE} is returned anywhere, an error will show up)
 #' @return Invisible \code{NULL} if all expressions returned \code{TRUE},
