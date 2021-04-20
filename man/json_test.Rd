@@ -37,6 +37,8 @@ json_test(
 
 \item{delta}{relative allowed imprecision, default is 0.03. Overrides value specified in reference JSON.}
 
+\item{max_time}{maximum time the test should take to run}
+
 \item{run}{a specific test to run only, no actual check. The output object will be returned.}
 
 \item{skip}{a vector of tests to skip (default is to run all)}
