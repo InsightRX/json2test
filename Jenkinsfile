@@ -23,7 +23,6 @@ pipeline {
       steps {
         echo 'Installing and checking irxtools'
         sh """
-        chmod +x slack_notification.sh
         docker cp . ${BUILD_TAG}:/src/json2test
         docker exec -i ${BUILD_TAG} Rscript -e "devtools::check('json2test')"
         """
