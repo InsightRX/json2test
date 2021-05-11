@@ -1,33 +1,47 @@
 #!groovy
 
-  pipeline {
-    agent {
-      label 'r-slave'
+pipeline {
+  agent {
+    label 'docker-runner'
+  }
+  stages{
+    stage('Run docker container') {
+      environment {
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+      }
+      steps {
+        echo "Running irx-r-base container"
+        sh """
+        \$(aws ecr get-login --no-include-email --region us-west-2 &> /dev/null)
+        docker run -d --name ${BUILD_TAG} 579831337053.dkr.ecr.us-west-2.amazonaws.com/irx-r-base:4
+        """
+      }
+
     }
-    stages{
-      stage('Build - json2test') {
-        steps {
-          echo 'building json2test'
-          sh """
-            #!/bin/bash
-            sudo chmod 777 ~/workspace
-            cd ~/workspace
-            if [ -d "json2test" ]; then
-              sudo rm -R json2test
-            fi
-            git clone git@github.com:InsightRX/json2test.git
-            cd json2test
-            git checkout $GIT_BRANCH
-            sudo chmod +x slack_notification.sh
-            sudo Rscript -e "if(require('testit', character.only = TRUE)) remove.packages('testit'); install.packages('testit', lib='/usr/lib/R/site-library', repos='http://cran.us.r-project.org', dependencies = TRUE)"
-            sudo Rscript -e "install.packages(c('tibble', 'testthat'), lib='/usr/lib/R/site-library', repos='https://cran.rstudio.com', dependencies = TRUE)"
-            R CMD INSTALL . --library=/usr/lib/R/site-library || { export STATUS=failed
-            ./slack_notification.sh
-            exit 1
-            }
-            R CMD check . --no-manual
-          """
-        }
+    stage('Build & test json2test') {
+      steps {
+        echo 'Installing and checking irxtools'
+        sh """
+        docker cp . ${BUILD_TAG}:/src/json2test
+        docker exec -i ${BUILD_TAG} Rscript -e "devtools::check('json2test')"
+        """
       }
     }
   }
+  post {
+    always {
+      sh """
+      docker rm -f ${BUILD_TAG} &>/dev/null && echo 'Removed container'
+      """
+    }
+    failure {
+      sh "chmod +x slack_notification.sh"
+      sh "./slack_notification.sh"
+    }
+  }
+  environment {
+    KHALEESI_SLACK_TOKEN = credentials('KHALEESI_SLACK_TOKEN')
+    JENKINS_SLACKBOT = credentials('JENKINS_SLACKBOT')
+  }
+}
