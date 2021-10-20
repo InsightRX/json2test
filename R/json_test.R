@@ -142,7 +142,12 @@ json_test <- function(
         return(tmp)
       } else { # run the actual tests
         if(class(tmp) != "list") {
-          stop(paste0("No list returned: ", tmp))
+          if(lib == "testthat") {
+            testthat::expect_true(FALSE, "return object is list")
+          } else {
+            json2test::assert(test_id, "return object is list", FALSE, time = time)
+          }
+          return()
         }
         do_checks <- TRUE
         if(!is.null(tmp$error) && tmp$error) {
