@@ -56,3 +56,30 @@ If the numeric value can vary somewhat, or you're not interested in decimals, th
   }
 }
 ```
+
+## R-specific values and data types
+
+JSON cannot represent R-specific values such as `NULL`, `NA` or `NaN`, nor R classes. To check for these, use one of the following special keywords as the reference value:
+
+| Keyword | Passes when the value... |
+|---|---|
+| `"$exists"` | is not `NULL`, has length > 0, and is not `NA` |
+| `"$null"` | is `NULL` |
+| `"$not_null"` | is not `NULL` |
+| `"$na"` | is `NA` (all elements `NA`, but not `NaN`) |
+| `"$nan"` | is `NaN` (all elements `NaN`) |
+| `"$class:<class>"` | inherits from `<class>`, e.g. `"$class:data.frame"`. Separate multiple classes with `\|` to allow any of them, e.g. `"$class:integer\|numeric"` |
+| `"$type:<type>"` | has `typeof()` equal to `<type>`, e.g. `"$type:double"` |
+
+For example:
+
+```
+{
+  "test_1": {
+    "res": "$class:data.frame",
+    "res.ncol": 3,
+    "warning": "$null",
+    "auc": "$nan"
+  }
+}
+```

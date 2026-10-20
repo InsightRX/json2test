@@ -183,7 +183,16 @@ json_test <- function(
                 equal_i <- FALSE
                 delta_i <- delta
               }
-              if(is.null(calc)) {
+              if(is_special_reference(ref_i)) {
+                result <- check_special_value(ref_i, calc)
+                if(lib == "testthat") {
+                  testthat::expect(result, paste0(test_id, " : ", key, " / ", refkey))
+                } else {
+                  result <- json2test::assert(test_id, paste0(key,": ", refkey), result, time = time)
+                }
+                sign <- ifelse(!result, "  [ ]\t", "  [\u2713]\t")
+                message(paste0(sign, key, "::", refkey, " (", format_value(calc), " == ", ref_i, ")"))
+              } else if(is.null(calc)) {
                 if(lib == "testthat") {
                   ref_i == "NA"
                   testthat::expect(ref_i == "NA", paste0(test_id, " : ", key, " / ", refkey))
@@ -194,15 +203,7 @@ json_test <- function(
               } else {
                 result <- FALSE
                 if(class(ref_i) == "character") {
-                  if(ref_i == "$exists") {
-                    result <- !is.null(calc) && !is.na(calc) && length(calc) > 0
-                  } else if (ref_i == "$na") {
-                    result <- is.na(calc)
-                  } else if (ref_i == "$null") {
-                    result <- is.null(calc)
-                  } else {
-                    result <- ref_i == calc
-                  }
+                  result <- ref_i == calc
                   if(lib == "testthat") {
                     testthat::expect(ref_i == calc, paste0(test_id, " : ", key, " / ", refkey))
                   } else {
