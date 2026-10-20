@@ -1,0 +1,11 @@
+{
+  "comment": "Checks for R-specific values and data types",
+  "is_null": "$null",
+  "is_na": "$na",
+  "is_nan": "$nan",
+  "is_df": "$class:data.frame",
+  "is_df.ncol": 2,
+  "is_int": "$type:integer",
+  "is_num": "$class:integer|numeric",
+  "is_chr": "$exists"
+}
